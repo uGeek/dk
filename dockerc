@@ -1,0 +1,82 @@
+#!/bin/bash
+#
+#  dockerc
+#
+VERSION="v0.3 28/03/2020"
+EDITOR="nano"
+
+
+if [ "$1" = "-h" ] || [ "$1" = "--help" ]  
+then
+echo "
+Modo de empleo: dockerc [OPCIONES]
+
+dockerc ls          -> Dockers que están corriendo
+dockerc  n          -> Guarda un nuevo docker
+dockerc -h, --help  -> Ayuda
+
+
+dockerc "$VERSION"
+ Copyright (C) 2020 Angel. uGeek
+ ugeekpodcast@gmail.com"
+exit
+fi
+
+
+if [ "$1" = "ls" ] 
+then
+docker ps --format 'table {{.Names}}\t{{.Ports}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort
+exit
+fi
+
+
+if [ "$1" = "n" ] 
+then
+clear
+echo ""
+echo "Vamos a guardar un nuevo docker."
+echo "Sitúate en el directorio donde tienes tus dotfiles-dockers"
+echo  " "
+echo -n " ¿A que grupo pertenece?: "  ; read GRUPO
+mkdir -p $PWD/$GRUPO/
+clear
+echo  " "
+echo -n " ¿Cual es el nombre del docker?: "  ; read NOMBRE
+$EDITOR $PWD/$GRUPO/$NOMBRE.docker
+clear
+echo "El docker $NOMBRE ha sido guardado con éxito!!!"
+exit
+fi
+
+
+
+clear
+echo ""
+echo "Listado de grupo de dockers disponibles"
+echo "---------------------------------------"
+echo ""
+ls -1F | grep '/$' | sed s'|/||'g
+echo ""
+echo ""
+echo ""
+echo -n "Selecciona el grupo de dockers deseado: " ; read GRUPO
+echo " "
+
+clear
+echo ""
+echo "Listado de contenedores disponibles"
+echo "-----------------------------------"
+echo ""
+ls -1 $PWD/$GRUPO/*.docker | cut -d "." -f1 | sed s'|'$PWD/$GRUPO'/||'g
+
+echo " "
+
+echo -n "  Escribe el nombre del docker que deseas montar: " ; read DOCKER
+
+
+$EDITOR $PWD/$GRUPO/$DOCKER.docker
+
+clear
+echo "Creando el Contenedor "$DOCKER"..."
+echo " "
+bash $PWD/$GRUPO/$DOCKER.docker
