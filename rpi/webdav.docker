@@ -1,0 +1,5 @@
+# Docker webdav server
+#         user: webdav
+#         pass: webdav
+
+docker run --name webdav --restart=unless-stopped -p 80:80 -v $HOME/docker/webdav:/media -e USERNAME=webdav -e PASSWORD=webdav -d ugeek/webdav:arm
