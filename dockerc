@@ -11,7 +11,7 @@ then
 echo "
 Modo de empleo: dockerc [OPCIONES]
 
-dockerc ls          -> Dockers que están corriendo
+dockerc ls          -> Dockers que están corriendo y sus puertos
 dockerc  n          -> Guarda un nuevo docker
 dockerc -h, --help  -> Ayuda
 
@@ -25,7 +25,7 @@ fi
 
 if [ "$1" = "ls" ] 
 then
-docker ps --format 'table {{.Names}}\t{{.Ports}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort
+docker ps --format 'table {{.Names}}\t{{.Ports}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort 2>/dev/null
 exit
 fi
 
