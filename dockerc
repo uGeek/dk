@@ -2,8 +2,27 @@
 #
 #  dockerc
 #
-VERSION="v0.3 28/03/2020"
-EDITOR="nano"
+VERSION="v0.4 28/03/2020"
+
+
+if [ ! -f ~/.config/dockerc/dockerc.conf ]; then
+    while true; do
+        echo ""
+        read -rp "El archivo de configuración no está creado, ¿Quieres crearlo ahora? (s/n) " yn
+        case "${yn}" in
+            [Ss]* ) mkdir -p  ~/.config/dockerc/
+		    echo -en "\n Escribe la ruta completa del directorio donde tienes o quieres guardar tus docker-dotfile \n\n\t Ejemplo: /home/usuario/dockerc: "
+		    read RUTA ; echo "RUTA_DOCKER_DOTFILE='"$RUTA"'" > ~/.config/dockerc/dockerc.conf
+		    echo -en "\n ¿Que editor de texto quieres utilizar? \n\n\t Ejemplo: vim: "
+		    read EDITOR ; echo "EDITOR='"$EDITOR"'" >> ~/.config/dockerc/dockerc.conf
+		    break;;
+            [Nn]* ) exit;;
+            * ) echo "Please answer y or n";;
+        esac
+    done
+fi
+
+source ~/.config/dockerc/dockerc.conf
 
 
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]  
@@ -11,6 +30,7 @@ then
 echo "
 Modo de empleo: dockerc [OPCIONES]
 
+dockerc             -> Menú para crear un contendor guardado
 dockerc ls          -> Dockers que están corriendo y sus puertos
 dockerc  n          -> Guarda un nuevo docker
 dockerc -h, --help  -> Ayuda
@@ -38,11 +58,11 @@ echo "Vamos a guardar un nuevo docker."
 echo "Sitúate en el directorio donde tienes tus dotfiles-dockers"
 echo  " "
 echo -n " ¿A que grupo pertenece?: "  ; read GRUPO
-mkdir -p $PWD/$GRUPO/
+mkdir -p $RUTA_DOCKER_DOTFILE/$GRUPO/
 clear
 echo  " "
 echo -n " ¿Cual es el nombre del docker?: "  ; read NOMBRE
-$EDITOR $PWD/$GRUPO/$NOMBRE.docker
+$EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
 clear
 echo "El docker $NOMBRE ha sido guardado con éxito!!!"
 exit
@@ -67,16 +87,16 @@ echo ""
 echo "Listado de contenedores disponibles"
 echo "-----------------------------------"
 echo ""
-ls -1 $PWD/$GRUPO/*.docker | cut -d "." -f1 | sed s'|'$PWD/$GRUPO'/||'g
+ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.docker | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/$GRUPO'/||'g
 
 echo " "
 
 echo -n "  Escribe el nombre del docker que deseas montar: " ; read DOCKER
 
 
-$EDITOR $PWD/$GRUPO/$DOCKER.docker
+$EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
 
 clear
 echo "Creando el Contenedor "$DOCKER"..."
 echo " "
-bash $PWD/$GRUPO/$DOCKER.docker
+bash $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
