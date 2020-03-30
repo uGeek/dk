@@ -2,7 +2,7 @@
 #
 #  dockerc
 #
-VERSION="v0.5 30/03/2020"
+VERSION="v0.6 30/03/2020"
 
 
 if [ ! -f ~/.config/dockerc/dockerc.conf ]; then
@@ -30,11 +30,12 @@ then
 echo "
 Modo de empleo: dockerc [OPCIONES]
 
-dockerc             -> Menú para crear un contendor guardado
-dockerc ls          -> Dockers que están corriendo y sus puertos
-dockerc ls -a       -> Todos los Dockers disponibles
-dockerc  n          -> Guarda un nuevo docker
-dockerc -h, --help  -> Ayuda
+dockerc                 -> Menú para crear un contendor guardado
+dockerc   n             -> Guarda un nuevo docker
+dockerc   i             -> Imagenes
+dockerc   c,    ls      -> Dockers que están corriendo y sus puertos
+dockerc   c -a ,ls -a   -> Todos los Dockers disponibles
+dockerc  -h, --help     -> Ayuda
 
 
 dockerc "$VERSION"
@@ -44,15 +45,22 @@ exit
 fi
 
 
-if [ "$1" = "ls" ] && [ "$2" = "-a" ]
+if [ "$1" = "i" ]
+then
+docker images --format 'table {{.Repository}}:{{.Tag}}\t{{.Size}}\t{{.CreatedSince}}'
+exit
+fi
+
+if [ "$1" = "ls" ] && [ "$2" = "-a" ] ||  [ "$1" = "c" ] && [ "$2" = "-a" ] 
 then
 docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' | sort 2>/dev/null
 exit
 fi
 
-if [ "$1" = "ls" ] 
+if [ "$1" = "ls" ] || [ "$1" = "c" ]  
 then
-docker ps --format 'table {{.Names}}\t{{.Ports}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort 2>/dev/null
+echo "CONTAINER"    
+docker ps --format 'table {{.Names}}\t{{.Ports}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' 2>/dev/null
 exit
 fi
 
@@ -112,3 +120,4 @@ clear
 echo "Creando el Contenedor "$DOCKER"..."
 echo " "
 bash $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
+
