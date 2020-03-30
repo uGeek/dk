@@ -2,7 +2,7 @@
 #
 #  dockerc
 #
-VERSION="v0.4 28/03/2020"
+VERSION="v0.5 30/03/2020"
 
 
 if [ ! -f ~/.config/dockerc/dockerc.conf ]; then
@@ -32,6 +32,7 @@ Modo de empleo: dockerc [OPCIONES]
 
 dockerc             -> Menú para crear un contendor guardado
 dockerc ls          -> Dockers que están corriendo y sus puertos
+dockerc ls -a       -> Todos los Dockers disponibles
 dockerc  n          -> Guarda un nuevo docker
 dockerc -h, --help  -> Ayuda
 
@@ -43,31 +44,42 @@ exit
 fi
 
 
+if [ "$1" = "ls" ] && [ "$2" = "-a" ]
+then
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' | sort 2>/dev/null
+exit
+fi
+
 if [ "$1" = "ls" ] 
 then
 docker ps --format 'table {{.Names}}\t{{.Ports}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort 2>/dev/null
 exit
 fi
 
-
 if [ "$1" = "n" ] 
 then
+
 clear
 echo ""
 echo "Vamos a guardar un nuevo docker."
-echo "Sitúate en el directorio donde tienes tus dotfiles-dockers"
-echo  " "
+echo ""
+echo ""
+echo "Listado de grupo de dockers disponibles"
+echo "---------------------------------------"
+echo ""
+ls -1F | grep '/$' | sed s'|/||'g
+echo ""
+echo ""
 echo -n " ¿A que grupo pertenece?: "  ; read GRUPO
 mkdir -p $RUTA_DOCKER_DOTFILE/$GRUPO/
 clear
 echo  " "
-echo -n " ¿Cual es el nombre del docker?: "  ; read NOMBRE
+echo -n " ¿Cual es el nombre del docker que quieres crear?: "  ; read NOMBRE
 $EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
 clear
 echo "El docker $NOMBRE ha sido guardado con éxito!!!"
 exit
 fi
-
 
 
 clear
