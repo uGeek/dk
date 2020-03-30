@@ -2,7 +2,7 @@
 #
 #  dockerc
 #
-VERSION="v0.7 30/03/2020"
+VERSION="v0.8 30/03/2020"
 
 
 if [ ! -f ~/.config/dockerc/dockerc.conf ]; then
@@ -24,15 +24,15 @@ fi
 
 source ~/.config/dockerc/dockerc.conf
 
-
 if [ "$1" = "-h" ] || [ "$1" = "--help" ]  
 then
 echo "
 Modo de empleo: dockerc [OPCIONES]
 
 dockerc                 -> Menú para crear un contendor guardado
+dockerc   a             -> Automontaje de todos los dockers de un grupo
 dockerc   n             -> Guarda un nuevo docker
-dockerc   i             -> Imagenes
+dockerc   i             -> Imagenes listadas por creación
 dockerc   c,    ls      -> Dockers que están corriendo y sus puertos
 dockerc   c -a ,ls -a   -> Todos los Dockers disponibles
 dockerc  -h, --help     -> Ayuda
@@ -44,6 +44,21 @@ dockerc "$VERSION"
 exit
 fi
 
+if [ "$1" = "a" ]
+then
+clear
+echo ""
+echo "Listado de grupo de dockers disponibles"
+echo ""
+echo ""
+ls -1F $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g
+echo ""
+echo -n "Selecciona el grupo de dockers de automontaje: " ; read GRUPO
+echo " "
+cat $RUTA_DOCKER_DOTFILE/$GRUPO/*.docker > ~/.config/dockerc/dockerc.automount
+/bin/bash ~/.config/dockerc/dockerc.automount
+exit
+fi
 
 if [ "$1" = "i" ]
 then
@@ -79,12 +94,11 @@ clear
 echo ""
 echo "Vamos a guardar un nuevo docker."
 echo ""
-echo ""
 echo "---------------------------------------"
 echo "Listado de grupo de dockers disponibles"
 echo "---------------------------------------"
 echo ""
-ls -1F | grep '/$' | sed s'|/||'g
+ls -1F $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g
 echo ""
 echo ""
 echo -n " ¿A que grupo pertenece?: "  ; read GRUPO
@@ -98,16 +112,13 @@ echo "El docker $NOMBRE ha sido guardado con éxito!!!"
 exit
 fi
 
-
 clear
 echo ""
 echo "---------------------------------------"
 echo "Listado de grupo de dockers disponibles"
 echo "---------------------------------------"
 echo ""
-ls -1F | grep '/$' | sed s'|/||'g
-echo ""
-echo ""
+ls -1F $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g
 echo ""
 echo -n "Selecciona el grupo de dockers deseado: " ; read GRUPO
 echo " "
@@ -119,15 +130,11 @@ echo "Listado de contenedores disponibles"
 echo "-----------------------------------"
 echo ""
 ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.docker | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/$GRUPO'/||'g
-
 echo " "
-
 echo -n "  Escribe el nombre del docker que deseas montar: " ; read DOCKER
-
-
 $EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
-
 clear
 echo "Creando el Contenedor "$DOCKER"..."
 echo " "
-bash $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
+/bin/bash $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
+
