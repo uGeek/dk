@@ -1,5 +1,5 @@
 # dockerc
-Create dockers that you have saved in 2 steps. List your docker, available images listed by date.
+Create dockers that you have saved in 2 steps. List your docker and available images listed by date.
 
 
 ## Install
