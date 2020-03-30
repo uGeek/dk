@@ -2,7 +2,7 @@
 #
 #  dockerc
 #
-VERSION="v0.6 30/03/2020"
+VERSION="v0.7 30/03/2020"
 
 
 if [ ! -f ~/.config/dockerc/dockerc.conf ]; then
@@ -47,19 +47,27 @@ fi
 
 if [ "$1" = "i" ]
 then
-docker images --format 'table {{.Repository}}:{{.Tag}}\t{{.Size}}\t{{.CreatedSince}}'
+echo "--------"
+echo "IMAGENES"
+echo "--------"
+docker images --format 'table {{.CreatedSince}}\t{{.Repository}}:{{.Tag}}\t{{.Size}}'
 exit
 fi
 
 if [ "$1" = "ls" ] && [ "$2" = "-a" ] ||  [ "$1" = "c" ] && [ "$2" = "-a" ] 
-then
-docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' | sort 2>/dev/null
+then    
+echo "----------------------"
+echo "CONTAINERS DISPONIBLES"
+echo "----------------------"
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' | sort | sed '/^ *#/d; /^ *$/d' 2>/dev/null
 exit
 fi
 
 if [ "$1" = "ls" ] || [ "$1" = "c" ]  
 then
-echo "CONTAINER"    
+echo "----------------------------------"
+echo "CONTAINERS CORRIENDO Y SUS PUERTOS"    
+echo "----------------------------------"
 docker ps --format 'table {{.Names}}\t{{.Ports}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' 2>/dev/null
 exit
 fi
@@ -72,6 +80,7 @@ echo ""
 echo "Vamos a guardar un nuevo docker."
 echo ""
 echo ""
+echo "---------------------------------------"
 echo "Listado de grupo de dockers disponibles"
 echo "---------------------------------------"
 echo ""
@@ -92,6 +101,7 @@ fi
 
 clear
 echo ""
+echo "---------------------------------------"
 echo "Listado de grupo de dockers disponibles"
 echo "---------------------------------------"
 echo ""
@@ -104,6 +114,7 @@ echo " "
 
 clear
 echo ""
+echo "-----------------------------------"
 echo "Listado de contenedores disponibles"
 echo "-----------------------------------"
 echo ""
@@ -120,4 +131,3 @@ clear
 echo "Creando el Contenedor "$DOCKER"..."
 echo " "
 bash $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
-
