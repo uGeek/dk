@@ -21,7 +21,7 @@ echo -e "\n\e[31mHay una nueva actualización de la aplicación\e[0m \e[1mdocker
 sudo curl -L https://raw.githubusercontent.com/uGeek/dockerc/master/dockerc \
           -o /usr/bin/dockerc && sudo chmod +x /usr/bin/dockerc
 clear	  
-echo -e "\n\t\e[1mdockerc.\e[0m \e[92mVersión $(wget -q -O- https://raw.githubusercontent.com/uGeek/dockerc/master/dockerc | grep "VERSION=" | cut -d "=" -f2 | sed s'|"||'g) actualizada con éxito! \e[0m\n"	  
+echo -e "\n\t\e[1mdockerc.\e[0m \e[92mVersión $(wget -q -O- https://raw.githubusercontent.com/uGeek/dockerc/master/dockerc | grep "^VERSION=" | cut -d "=" -f2 | sed s'|"||'g) actualizada con éxito! \e[0m\n"	  
 exit 0
 fi
 fi
