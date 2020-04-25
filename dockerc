@@ -215,6 +215,7 @@ echo "-------------------"
 echo ""
 cat $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
 echo " "
+echo " "
 echo "-------------------"
 echo " "
 exit
