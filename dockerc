@@ -2,7 +2,7 @@
 #
 #  dockerc
 #
-VERSION="v0.9.3 25/04/2020"
+VERSION="v0.9.4 25/04/2020"
 
 
 
@@ -132,6 +132,7 @@ read CONTENEDOR
 CONTENEDORUP=$(cat ~/.config/dockerc/up.dockerc | sed -n ""$CONTENEDOR""p)
 echo ""
 echo "    Contenedor $(docker start "$CONTENEDORUP") iniciado"
+echo ""
 exit
 fi
 
@@ -149,6 +150,7 @@ read CONTENEDOR
 CONTENEDORUP=$(cat ~/.config/dockerc/down.dockerc | sed -n ""$CONTENEDOR""p)
 echo ""
 echo "    Detenido el contenedor $(docker stop "$CONTENEDORUP")"
+echo ""
 exit
 fi
 
