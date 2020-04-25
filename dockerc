@@ -117,6 +117,37 @@ docker ps --format 'table {{.Names}}\t{{.Ports}}' |  sed 's|NAMES||g' |  sed 's|
 exit
 fi
 
+if [ "$1" = "u" ] || [ "$1" = "start" ] || [ "$1" = "up" ] 
+then
+echo "----------------------"
+echo "CONTAINERS DISPONIBLES"    
+echo "----------------------"
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/up.dockerc
+echo ""
+echo -en "    Selecciona el número de contenedor que quieres iniciar: "
+read CONTENEDOR
+CONTENEDORUP=$(cat ~/.config/dockerc/up.dockerc | sed -n ""$CONTENEDOR""p)
+docker start "$CONTENEDORUP"
+exit
+fi
+
+
+if [ "$1" = "d" ] || [ "$1" = "stop" ] || [ "$1" = "down" ] 
+then
+echo "--------------------"
+echo "CONTAINERS CORRIENDO"    
+echo "--------------------"
+docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/down.dockerc
+echo ""
+echo -en "    Selecciona el número de contenedor que quieres iniciar: "
+read CONTENEDOR
+CONTENEDORUP=$(cat ~/.config/dockerc/down.dockerc | sed -n ""$CONTENEDOR""p)
+docker stop "$CONTENEDORUP"
+exit
+fi
+
 if [ "$1" = "n" ] 
 then
 
