@@ -131,7 +131,7 @@ echo -en "    Selecciona el número de contenedor que quieres iniciar: "
 read CONTENEDOR
 CONTENEDORUP=$(cat ~/.config/dockerc/up.dockerc | sed -n ""$CONTENEDOR""p)
 echo ""
-echo "    Contenedor $(docker start "$CONTENEDORUP")iniciado"
+echo "    Contenedor $(docker start "$CONTENEDORUP") iniciado"
 exit
 fi
 
