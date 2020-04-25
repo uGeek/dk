@@ -60,15 +60,15 @@ echo "
 Modo de empleo: dockerc [OPCIONES]
 
 dk                 -> Menú para crear un contendor guardado con docker o docker-compose
-dk   s             -> Menú para ver un contendor guardado con docker o docker-compose  
-dk   a             -> Automontaje de todos los dockers de un grupo
-dk   n             -> Guarda un nuevo docker
-dk   i             -> Imagenes listadas por creación
-dk   u, up, start  -> Lista dockers con su número para iniciar
-dk   d, down, stop -> Lista dockers corriendo, con su número para detener
-dk   c,    ls      -> Dockers que están corriendo y sus puertos
-dk   c -a ,ls -a   -> Todos los Dockers disponibles
-dk  -h, --help     -> Ayuda
+dk   s             -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
+dk   a             -> Automontaje de todos los dockers de un grupo (add)
+dk   n             -> Guarda un nuevo docker (new)
+dk   i             -> Imagenes listadas por creación (image)
+dk   u, up, start  -> Lista dockers con su número para iniciar (up)
+dk   d, down, stop -> Lista dockers corriendo, con su número para detener (down)
+dk   c,    ls      -> Dockers que están corriendo y sus puertos (list)
+dk   c -a ,ls -a   -> Todos los Dockers disponibles (list all)
+dk  -h, --help     -> Ayuda (help)
 
 
 dockerc "$VERSION"
@@ -214,7 +214,8 @@ echo "Contenedor "$DOCKER""
 echo "-------------------"
 echo ""
 cat $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
-echo ""
+echo " "
+echo " "
 exit
 fi
 
