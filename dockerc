@@ -2,7 +2,7 @@
 #
 #  dockerc
 #
-VERSION="v0.9.6 25/04/2020"
+VERSION="v0.9.6.1 25/04/2020"
 
 
 
@@ -19,7 +19,7 @@ else
 echo
 echo -e "\n\e[31mHay una nueva actualización de la aplicación\e[0m \e[1mdockerc\e[0m\n\t\e[92mva a procederse la instalación\e[0m\n"
 sudo curl -L https://raw.githubusercontent.com/uGeek/dockerc/master/dockerc \
-          -o /usr/bin/dockerc && sudo chmod +x /usr/bin/dockerc
+          -o /usr/bin/dk && sudo chmod +x /usr/bin/dk
 clear	  
 echo -e "\n\t\e[1mdockerc.\e[0m \e[92mVersión $(wget -q -O- https://raw.githubusercontent.com/uGeek/dockerc/master/dockerc | grep "^VERSION=" | cut -d "=" -f2 | sed s'|"||'g) actualizada con éxito! \e[0m\n"	  
 exit 0
