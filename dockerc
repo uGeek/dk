@@ -2,7 +2,7 @@
 #
 #  dockerc
 #
-VERSION="v0.9.5 25/04/2020"
+VERSION="v0.9.6 25/04/2020"
 
 
 
@@ -111,6 +111,7 @@ echo "----------------------"
 echo "CONTAINERS DISPONIBLES"
 echo "----------------------"
 docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+echo ""
 exit
 fi
 
@@ -120,6 +121,7 @@ echo "----------------------------------"
 echo "CONTAINERS CORRIENDO Y SUS PUERTOS"    
 echo "----------------------------------"
 docker ps --format 'table {{.Names}}\t{{.Ports}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+echo ""
 exit
 fi
 
@@ -207,6 +209,7 @@ ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.docker | cut -d "." -f1 | sed s'|'$RUTA_DOCK
 echo " "
 echo -n "  Escribe el nombre del docker que deseas montar: " ; read DOCKER
 cat $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
+echo ""
 exit
 fi
 
