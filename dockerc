@@ -2,7 +2,7 @@
 #
 #  dockerc
 #
-VERSION="v0.9.2 10/04/2020"
+VERSION="v0.9.3 25/04/2020"
 
 
 
@@ -63,6 +63,8 @@ dockerc                 -> Menú para crear un contendor guardado. Con docker o 
 dockerc   a             -> Automontaje de todos los dockers de un grupo
 dockerc   n             -> Guarda un nuevo docker
 dockerc   i             -> Imagenes listadas por creación
+dockerc   u, up, start  -> Lista dockers con su número para iniciar
+dockerc   d, down, stop -> Lista dockers corriendo, con su número para detener
 dockerc   c,    ls      -> Dockers que están corriendo y sus puertos
 dockerc   c -a ,ls -a   -> Todos los Dockers disponibles
 dockerc  -h, --help     -> Ayuda
