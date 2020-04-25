@@ -59,15 +59,15 @@ then
 echo "
 Modo de empleo: dockerc [OPCIONES]
 
-dockerc                 -> Menú para crear un contendor guardado. Con docker o docker-compose
-dockerc   a             -> Automontaje de todos los dockers de un grupo
-dockerc   n             -> Guarda un nuevo docker
-dockerc   i             -> Imagenes listadas por creación
-dockerc   u, up, start  -> Lista dockers con su número para iniciar
-dockerc   d, down, stop -> Lista dockers corriendo, con su número para detener
-dockerc   c,    ls      -> Dockers que están corriendo y sus puertos
-dockerc   c -a ,ls -a   -> Todos los Dockers disponibles
-dockerc  -h, --help     -> Ayuda
+dk                 -> Menú para crear un contendor guardado. Con docker o docker-compose
+dk   a             -> Automontaje de todos los dockers de un grupo
+dk   n             -> Guarda un nuevo docker
+dk   i             -> Imagenes listadas por creación
+dk   u, up, start  -> Lista dockers con su número para iniciar
+dk   d, down, stop -> Lista dockers corriendo, con su número para detener
+dk   c,    ls      -> Dockers que están corriendo y sus puertos
+dk   c -a ,ls -a   -> Todos los Dockers disponibles
+dk  -h, --help     -> Ayuda
 
 
 dockerc "$VERSION"
@@ -130,7 +130,8 @@ echo ""
 echo -en "    Selecciona el número de contenedor que quieres iniciar: "
 read CONTENEDOR
 CONTENEDORUP=$(cat ~/.config/dockerc/up.dockerc | sed -n ""$CONTENEDOR""p)
-docker start "$CONTENEDORUP"
+echo ""
+echo "    Contenedor $(docker start "$CONTENEDORUP")iniciado"
 exit
 fi
 
@@ -143,12 +144,14 @@ echo "--------------------"
 docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
 docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/down.dockerc
 echo ""
-echo -en "    Selecciona el número de contenedor que quieres iniciar: "
+echo -en "    Selecciona el número de contenedor que quieres detener: "
 read CONTENEDOR
 CONTENEDORUP=$(cat ~/.config/dockerc/down.dockerc | sed -n ""$CONTENEDOR""p)
-docker stop "$CONTENEDORUP"
+echo ""
+echo "    Detenido el contenedor $(docker stop "$CONTENEDORUP")"
 exit
 fi
+
 
 if [ "$1" = "n" ] 
 then
