@@ -208,6 +208,11 @@ echo ""
 ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.docker | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/$GRUPO'/||'g
 echo " "
 echo -n "  Escribe el nombre del docker que deseas montar: " ; read DOCKER
+clear
+echo ""
+echo "Contenedor "$DOCKER""
+echo "-------------------"
+echo ""
 cat $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
 echo ""
 exit
