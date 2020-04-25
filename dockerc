@@ -97,7 +97,7 @@ then
 echo "--------"
 echo "IMAGENES"
 echo "--------"
-docker images --format 'table {{.CreatedSince}}\t{{.Repository}}:{{.Tag}}\t{{.Size}}'
+docker images --format 'table {{.CreatedSince}}\t{{.Repository}}:{{.Tag}}\t{{.Size}}' | nl
 exit
 fi
 
@@ -106,7 +106,7 @@ then
 echo "----------------------"
 echo "CONTAINERS DISPONIBLES"
 echo "----------------------"
-docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' | sort | sed '/^ *#/d; /^ *$/d' 2>/dev/null
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
 exit
 fi
 
@@ -115,7 +115,7 @@ then
 echo "----------------------------------"
 echo "CONTAINERS CORRIENDO Y SUS PUERTOS"    
 echo "----------------------------------"
-docker ps --format 'table {{.Names}}\t{{.Ports}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' 2>/dev/null
+docker ps --format 'table {{.Names}}\t{{.Ports}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
 exit
 fi
 
