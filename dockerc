@@ -2,7 +2,7 @@
 #
 #  dockerc
 #
-VERSION="v0.9.4 25/04/2020"
+VERSION="v0.9.5 25/04/2020"
 
 
 
@@ -97,7 +97,10 @@ then
 echo "--------"
 echo "IMAGENES"
 echo "--------"
-docker images --format 'table {{.CreatedSince}}\t{{.Repository}}:{{.Tag}}\t{{.Size}}' | nl
+docker images --format 'table {{.CreatedSince}}\t{{.Repository}}:{{.Tag}}\t{{.Size}}'
+echo ""
+echo "    $(docker images --format 'table {{.CreatedSince}}\t{{.Repository}}:{{.Tag}}\t{{.Size}}' | tail -n +2 | wc -l) Imagenes en total"
+echo ""
 exit
 fi
 
