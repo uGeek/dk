@@ -1,4 +1,4 @@
-# dockerc
+# dk
 Create dockers that you have saved in 2 steps. 
 List your dockers and their ports. List your images by creation date
 
@@ -6,7 +6,7 @@ List your dockers and their ports. List your images by creation date
 
 ```
 sudo curl -L https://raw.githubusercontent.com/uGeek/dockerc/master/dockerc \
-          -o /usr/bin/dockerc && sudo chmod +x /usr/bin/dockerc
+          -o /usr/bin/dk && sudo chmod +x /usr/bin/dk
 ```
 
 
