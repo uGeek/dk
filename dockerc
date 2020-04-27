@@ -69,8 +69,8 @@ dk   d, down, stop -> Lista dockers corriendo, con su número para detener (down
 dk   d -a          -> Detener todos los contenedores 
 dk   rm            -> Lista contenedores con su número para ser borrado (remove)
 dk   rmi           -> Lista imagenes con su número para ser borradas (remove image)
-dk   c,    ls      -> Dockers que están corriendo y sus puertos (list)
-dk   c -a ,ls -a   -> Todos los Dockers disponibles (list all)
+dk   ps,    ls      -> Dockers que están corriendo y sus puertos (list)
+dk   ps -a ,ls -a   -> Todos los Dockers disponibles (list all)
 dk  -h, --help     -> Ayuda (help)
 
 
@@ -108,7 +108,7 @@ echo ""
 exit
 fi
 
-if [ "$1" = "ls" ] && [ "$2" = "-a" ] ||  [ "$1" = "c" ] && [ "$2" = "-a" ] 
+if [ "$1" = "ls" ] && [ "$2" = "-a" ] || [ "$1" = "ps" ] && [ "$2" = "-a" ] 
 then    
 echo "----------------------"
 echo "CONTAINERS DISPONIBLES"
@@ -118,7 +118,7 @@ echo ""
 exit
 fi
 
-if [ "$1" = "ls" ] || [ "$1" = "c" ]  
+if [ "$1" = "ls" ] || [ "$1" = "ps" ]  
 then
 echo "----------------------------------"
 echo "CONTAINERS CORRIENDO Y SUS PUERTOS"    
