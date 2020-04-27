@@ -2,7 +2,7 @@
 #
 #  dockerc
 #
-VERSION="v0.9.6.2 27/04/2020"
+VERSION="v0.9.6.3 27/04/2020"
 
 
 
@@ -48,30 +48,31 @@ fi
 
 source ~/.config/dockerc/dockerc.conf
 
-if [ "$1" = "-v" ] || [ "$1" = "--version" ]  
+if [ "$1" = "-v" ] || [ "$1" = "--version" ] || [ "$1" = "v" ] 
 then
 echo "$VERSION"
 exit
 fi
 
-if [ "$1" = "-h" ] || [ "$1" = "--help" ]  
+if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$1" = "h" ]
 then
 echo "
 Modo de empleo: dockerc [OPCIONES]
 
-dk                 -> Menú para crear un contendor guardado con docker o docker-compose
-dk   s             -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
-dk   a             -> Automontaje de todos los dockers de un grupo (add)
-dk   n             -> Guarda un nuevo docker (new)
-dk   i             -> Imagenes listadas por creación (image)
-dk   u, up, start  -> Lista dockers con su número para iniciar (up)
-dk   d, down, stop -> Lista dockers corriendo, con su número para detener (down)
-dk   d -a          -> Detener todos los contenedores 
-dk   rm            -> Lista contenedores con su número para ser borrado (remove)
-dk   rmi           -> Lista imagenes con su número para ser borradas (remove image)
-dk   ps,    ls      -> Dockers que están corriendo y sus puertos (list)
-dk   ps -a ,ls -a   -> Todos los Dockers disponibles (list all)
-dk  -h, --help     -> Ayuda (help)
+dk                       -> Menú para crear un contendor guardado con docker o docker-compose
+dk   s                   -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
+dk   a                   -> Automontaje de todos los dockers de un grupo (add)
+dk   n                   -> Guarda un nuevo docker (new)
+dk   i                   -> Imagenes listadas por creación (image)
+dk   u, up, start        -> Lista dockers con su número para iniciar (up)
+dk   d, down, stop       -> Lista dockers corriendo, con su número para detener (down)
+dk   d -a, stop -a, ...  -> Detener todos los contenedores 
+dk   rm                  -> Lista contenedores con su número para ser borrado (remove)
+dk   rmi                 -> Lista imagenes con su número para ser borradas (remove image)
+dk   p, prune            -> Borrar Contenedores, imágenes, redes colgados 
+dk   ps,    ls           -> Dockers que están corriendo y sus puertos (list)
+dk   ps -a ,ls -a        -> Todos los Dockers disponibles (list all)
+dk  -h, h, --help        -> Ayuda (help)
 
 
 dockerc "$VERSION"
@@ -145,6 +146,11 @@ echo ""
 exit
 fi
 
+if [ "$1" = "d" ] && [ "$2" = "-a" ] || [ "$1" = "stop" ] && [ "$2" = "-a" ] || [ "$1" = "down" ] && [ "$2" = "-a" ] 
+then    
+docker stop $(docker ps -q)
+exit
+fi
 
 if [ "$1" = "d" ] || [ "$1" = "stop" ] || [ "$1" = "down" ] 
 then
@@ -160,12 +166,6 @@ CONTENEDORUP=$(cat ~/.config/dockerc/down.dockerc | sed -n ""$CONTENEDOR""p)
 echo ""
 echo "    Detenido el contenedor $(docker stop "$CONTENEDORUP")"
 echo ""
-exit
-fi
-
-if [ "$1" = "d" ] && [ "$2" = "-a" ]
-then    
-docker stop $(docker ps -q)
 exit
 fi
 
@@ -200,6 +200,13 @@ CONTENEDORUP=$(cat ~/.config/dockerc/image.dockerc | sed -n ""$CONTENEDOR""p)
 echo ""
 echo "    Borrada la imagen $(docker rmi "$CONTENEDORUP")"
 echo ""
+exit
+fi
+
+
+if [ "$1" = "p" ] || [ "$1" = "prune" ]  
+then
+docker system prune
 exit
 fi
 
