@@ -7,7 +7,7 @@ VERSION="v0.9.6.1 25/04/2020"
 
 
 
-SOFT=$(diff -q  /usr/bin/dockerc <(wget -q -O- https://raw.githubusercontent.com/uGeek/dockerc/master/dockerc 2>/dev/null))
+SOFT=$(diff -q  /usr/bin/dk <(wget -q -O- https://raw.githubusercontent.com/uGeek/dockerc/master/dk 2>/dev/null))
 
 if [ "$(cat ~/.config/dockerc/last.log 2>/dev/null)" != "$(date +"%Y%m%d")" ]
 then
@@ -66,6 +66,7 @@ dk   n             -> Guarda un nuevo docker (new)
 dk   i             -> Imagenes listadas por creación (image)
 dk   u, up, start  -> Lista dockers con su número para iniciar (up)
 dk   d, down, stop -> Lista dockers corriendo, con su número para detener (down)
+dk   rm            -> Lista dockers con su número y borra el contenedor (remove)
 dk   c,    ls      -> Dockers que están corriendo y sus puertos (list)
 dk   c -a ,ls -a   -> Todos los Dockers disponibles (list all)
 dk  -h, --help     -> Ayuda (help)
@@ -160,10 +161,27 @@ echo ""
 exit
 fi
 
+if [ "$1" = "rm" ]
+then
+echo "------------------"
+echo "BORRAR CONTAINERS "
+echo "------------------"
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/remove\
+.dockerc
+echo ""
+echo -en "    Selecciona el número de contenedor que quieres borrar: "
+read CONTENEDOR
+CONTENEDORUP=$(cat ~/.config/dockerc/remove.dockerc | sed -n ""$CONTENEDOR""p)
+echo ""
+echo "    Borrado el contenedor $(docker rm "$CONTENEDORUP")"
+echo ""
+exit
+fi
+
 
 if [ "$1" = "n" ] 
 then
-
 clear
 echo ""
 echo "Vamos a guardar un nuevo docker."
