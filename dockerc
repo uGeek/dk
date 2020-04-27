@@ -66,7 +66,8 @@ dk   n             -> Guarda un nuevo docker (new)
 dk   i             -> Imagenes listadas por creación (image)
 dk   u, up, start  -> Lista dockers con su número para iniciar (up)
 dk   d, down, stop -> Lista dockers corriendo, con su número para detener (down)
-dk   rm            -> Lista dockers con su número y borra el contenedor (remove)
+dk   rm            -> Lista contenedores con su número para ser borrado (remove)
+dk   rmi           -> Lista imagenes con su número para ser borradas (remove image)
 dk   c,    ls      -> Dockers que están corriendo y sus puertos (list)
 dk   c -a ,ls -a   -> Todos los Dockers disponibles (list all)
 dk  -h, --help     -> Ayuda (help)
@@ -167,8 +168,7 @@ echo "------------------"
 echo "BORRAR CONTAINERS "
 echo "------------------"
 docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
-docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/remove\
-.dockerc
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/remove.dockerc
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres borrar: "
 read CONTENEDOR
@@ -179,6 +179,22 @@ echo ""
 exit
 fi
 
+if [ "$1" = "rmi" ]
+then
+echo "----------------"
+echo "BORRAR IMAGENES "
+echo "----------------"
+docker images --format 'table {{.Repository}}:{{.Tag}}\t{{.Size}}' | tail -n +2 | nl  2>/dev/null
+docker images --format 'table {{.Repository}}:{{.Tag}}' | tail -n +2 > ~/.config/dockerc/image.dockerc
+echo ""
+echo -en "    Selecciona el número de imagen que deseas borrar: "
+read CONTENEDOR
+CONTENEDORUP=$(cat ~/.config/dockerc/image.dockerc | sed -n ""$CONTENEDOR""p)
+echo ""
+echo "    Borrada la imagen $(docker rm "$CONTENEDORUP")"
+echo ""
+exit
+fi
 
 if [ "$1" = "n" ] 
 then
