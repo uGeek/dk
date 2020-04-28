@@ -231,6 +231,23 @@ echo ""
 exit
 fi
 
+if [ "$1" = "s" ] && [ "$2" = "s" ] || [ "$1" = "stats" ] && [ "$2" = "sort" ]
+then
+echo "-----------------------------"
+echo "Ordenar por Contenedores por:"
+echo "-----------------------------"
+echo ""
+echo -e " 1 NOMBRE\n 2 CPU\n 3 MEMORIA\n 4 TRAFICO\n"
+echo -en "  Selecciona el número por el orden que desees: "
+read NUM
+echo -en "  Pon r, si quieres que esté ordenado de Mayor a menor:  "
+read ORD
+echo "NOMBRE              CPU %               MEM %               TRAFICO ENTRADA/SALIDA"
+docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemPerc}}\t{{.NetIO}}"  | tail -n +2 | sort -nk"$NUM""$ORD"
+exit
+fi
+
+
 if [ "$1" = "stats" ] && [ "$2" = "c" ] || [ "$1" = "s" ] && [ "$2" = "c" ]
 then
 echo "---------------"
