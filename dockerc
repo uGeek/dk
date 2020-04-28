@@ -67,7 +67,7 @@ echo "
 Modo de empleo: dockerc [OPCIONES]
 
 dk                       -> Menú para crear un contendor guardado con docker o docker-compose
-dk   s                   -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
+dk   vc                  -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
 dk   a                   -> Automontaje de todos los dockers de un grupo (add)
 dk   n                   -> Guarda un nuevo docker (new)
 dk   i                   -> Imagenes listadas por creación (image)
@@ -76,6 +76,9 @@ dk   d, down, stop       -> Lista dockers corriendo, con su número para detener
 dk   d -a, stop -a, ...  -> Detener todos los contenedores 
 dk   rm                  -> Lista contenedores con su número para ser borrado (remove)
 dk   rmi                 -> Lista imagenes con su número para ser borradas (remove image)
+dk   l, log              -> Lista contendores con su número, para ver los logs
+dk   s, stats            -> Ver consumo de cpu, memoria,... de todos los contenedores
+dk   s c, stats c        -> Lista contenedores con su número para ver el consumo de cpu, memoria,...
 dk   p, prune            -> Borrar todos los Contenedores, imágenes, redes, que esten detenidos
 dk   ps,    ls           -> Dockers que están corriendo y sus puertos (list)
 dk   ps -a ,ls -a        -> Todos los Dockers disponibles (list all)
@@ -193,6 +196,24 @@ echo ""
 exit
 fi
 
+if [ "$1" = "log" ] ||  [ "$1" = "l" ]
+then
+echo "---------------"
+echo "log CONTAINERS "
+echo "---------------"
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/logs.dockerc
+echo ""
+echo -en "    Selecciona el número de contenedor que quieres ver los logs: "
+read CONTENEDOR
+CONTENEDORUP=$(cat ~/.config/dockerc/logs.dockerc | sed -n ""$CONTENEDOR""p)
+echo ""
+echo "    log del contenedor $(docker logs -f "$CONTENEDORUP")"
+echo ""
+exit
+fi
+
+
 if [ "$1" = "rmi" ]
 then
 echo "----------------"
@@ -210,6 +231,26 @@ echo ""
 exit
 fi
 
+if [ "$1" = "stats" ] && [ "$2" = "c" ] || [ "$1" = "s" ] && [ "$2" = "c" ]
+then
+echo "---------------"
+echo "log CONTAINERS "
+echo "---------------"
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/stats.dockerc
+echo ""
+echo -en "    Selecciona el número de contenedor que quieres ver su cpu, memoria, ... "
+read CONTENEDOR
+CONTENEDORUP=$(cat ~/.config/dockerc/stats.dockerc | sed -n ""$CONTENEDOR""p)
+docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemPerc}}\t{{.NetIO}}" "$CONTENEDORUP"
+exit
+fi
+
+if [ "$1" = "stats" ] || [ "$1" = "s" ] 
+then
+docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemPerc}}\t{{.NetIO}}"
+exit
+fi
 
 if [ "$1" = "p" ] || [ "$1" = "prune" ]  
 then
@@ -241,7 +282,7 @@ echo "El docker $NOMBRE ha sido guardado con éxito!!!"
 exit
 fi
 
-if [ "$1" = "s" ] 
+if [ "$1" = "vc" ] 
 then
 clear
 echo ""
