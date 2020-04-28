@@ -2,7 +2,7 @@
 #
 #  dockerc
 #
-VERSION="v0.9.6.5 28/04/2020"
+VERSION="v0.9.7.0 28/04/2020"
 
 
 
@@ -79,6 +79,7 @@ dk   rmi                 -> Lista imagenes con su número para ser borradas (rem
 dk   l, log              -> Lista contendores con su número, para ver los logs
 dk   s, stats            -> Ver consumo de cpu, memoria,... de todos los contenedores
 dk   s c, stats c        -> Lista contenedores con su número para ver el consumo de cpu, memoria,...
+dk   ss, stats sort      -> Ordena contenedores por cpu, memoria, ...
 dk   p, prune            -> Borrar todos los Contenedores, imágenes, redes, que esten detenidos
 dk   ps,    ls           -> Dockers que están corriendo y sus puertos (list)
 dk   ps -a ,ls -a        -> Todos los Dockers disponibles (list all)
@@ -231,7 +232,7 @@ echo ""
 exit
 fi
 
-if [ "$1" = "s" ] && [ "$2" = "s" ] || [ "$1" = "stats" ] && [ "$2" = "sort" ]
+if [ "$1" = "stats" ] && [ "$2" = "sort" ] || [ "$1" = "ss" ]
 then
 echo "-----------------------------"
 echo "Ordenar por Contenedores por:"
