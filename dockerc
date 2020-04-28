@@ -7,7 +7,7 @@ VERSION="v0.9.6.3 27/04/2020"
 
 
 
-SOFT=$(diff -q  /usr/bin/dk <(wget -q -O- https://raw.githubusercontent.com/uGeek/dockerc/master/dk 2>/dev/null))
+SOFT=$(diff -q  /usr/bin/dk <(wget -q -O- https://raw.githubusercontent.com/uGeek/dockerc/master/dockerc 2>/dev/null))
 
 if [ "$(cat ~/.config/dockerc/last.log 2>/dev/null)" != "$(date +"%Y%m%d")" ]
 then
