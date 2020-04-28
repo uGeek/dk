@@ -17,11 +17,18 @@ then
 echo "" 2>/dev/null
 else
 echo
-echo -e "\n\e[31mHay una nueva actualización de la aplicación\e[0m \e[1mdockerc\e[0m\n\t\e[92mva a procederse la instalación\e[0m\n"
+echo -e "\e[31mHay una nueva actualización de la aplicación\e[0m \e[1mdockerc\e[0m"
+echo -en "¿Quieres actualizar ahora? [si/No]: "
+read RESPONSE
+if [ $RESPONSE == si ] || [ $RESPONSE == SI ] || [ $RESPONSE == s ] || [ $RESPONSE == S ]
+then
 sudo curl -L https://raw.githubusercontent.com/uGeek/dockerc/master/dockerc \
           -o /usr/bin/dk && sudo chmod +x /usr/bin/dk
 clear	  
 echo -e "\n\t\e[1mdockerc.\e[0m \e[92mVersión $(wget -q -O- https://raw.githubusercontent.com/uGeek/dockerc/master/dockerc | grep "^VERSION=" | cut -d "=" -f2 | sed s'|"||'g) actualizada con éxito! \e[0m\n"	  
+else 
+echo ""
+fi
 exit 0
 fi
 fi
@@ -69,7 +76,7 @@ dk   d, down, stop       -> Lista dockers corriendo, con su número para detener
 dk   d -a, stop -a, ...  -> Detener todos los contenedores 
 dk   rm                  -> Lista contenedores con su número para ser borrado (remove)
 dk   rmi                 -> Lista imagenes con su número para ser borradas (remove image)
-dk   p, prune            -> Borrar Contenedores, imágenes, redes colgados 
+dk   p, prune            -> Borrar todos los Contenedores, imágenes, redes, que esten detenidos
 dk   ps,    ls           -> Dockers que están corriendo y sus puertos (list)
 dk   ps -a ,ls -a        -> Todos los Dockers disponibles (list all)
 dk  -h, h, --help        -> Ayuda (help)
