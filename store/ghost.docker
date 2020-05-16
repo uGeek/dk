@@ -1,0 +1,7 @@
+#  ghost 
+#  Versión para ARM, i386, amd64...
+#  Puerto: 3001
+#  Sustituye localhost por tu ip
+
+
+ docker run -d --name ghost -e url=http://localhost:3001 -p 3001:2368 ghost
