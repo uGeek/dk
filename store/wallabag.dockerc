@@ -1,0 +1,16 @@
+# Docker wallabag
+#         user: wallabag
+#         pass: wallabag
+#
+# arquitecturas disponibles:
+#         ugeek/wallabag:arm
+#         ugeek/wallabag:i386
+
+
+docker create --name wallabag  \
+-p 85:80 \
+-v $HOME/docker/wallabag/data:/var/www/wallabag/data \
+-v $HOME/docker/wallabag/images:/var/www/wallabag/web/assets/images \
+-e SYMFONY__ENV__DOMAIN_NAME=http://192.168.1.100:85 \
+ugeek/wallabag:arm
+
