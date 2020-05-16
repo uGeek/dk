@@ -2,7 +2,7 @@
 #
 #  dockerc
 #
-VERSION="v0.9.7.2 16/05/2020"
+VERSION="v0.9.7.3 16/05/2020"
 
 
 
@@ -75,6 +75,7 @@ dk   u, up, start        -> Lista dockers con su número para iniciar (up)
 dk   d, down, stop       -> Lista dockers corriendo, con su número para detener (down)
 dk   d -a, stop -a, ...  -> Detener todos los contenedores 
 dk   e, exec             -> Entrar dentro del contenedor
+dk   st, store           -> Descarga Dockers de la store de dockerc
 dk   rm                  -> Lista contenedores con su número para ser borrado (remove)
 dk   rmi                 -> Lista imagenes con su número para ser borradas (remove image)
 dk   l, log              -> Lista contendores con su número, para ver los logs
@@ -92,6 +93,21 @@ dockerc "$VERSION"
  ugeekpodcast@gmail.com"
 exit
 fi
+
+if [ "$1" = "st" ] || [ "$1" = "store" ]
+then
+SVN=$(dpkg --list | grep -i subversion)
+if [ "$SVN" = "" ]
+then
+echo "Para poder descargar dockers desde el dockerc store, necesitas instalar el paquete subversion"
+echo "En derivadas de debian, se instala con:"
+echo "   sudo apt install subversion"
+else
+svn export https://github.com/uGeek/dockerc/trunk/store $RUTA_DOCKER_DOTFILE/store --force
+fi    
+exit
+fi
+
 
 if [ "$1" = "a" ]
 then
