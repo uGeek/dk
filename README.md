@@ -22,6 +22,8 @@ dk   i                   -> Imagenes listadas por creación (image)
 dk   u, up, start        -> Lista dockers con su número para iniciar (up)
 dk   d, down, stop       -> Lista dockers corriendo, con su número para detener (down)
 dk   d -a, stop -a, ...  -> Detener todos los contenedores 
+dk   e, exec             -> Entrar dentro del contenedor
+dk   st, store           -> Descarga Dockers de la store de dockerc
 dk   rm                  -> Lista contenedores con su número para ser borrado (remove)
 dk   rmi                 -> Lista imagenes con su número para ser borradas (remove image)
 dk   l, log              -> Lista contendores con su número, para ver los logs
@@ -32,6 +34,7 @@ dk   p, prune            -> Borrar todos los Contenedores, imágenes, redes, que
 dk   ps,    ls           -> Dockers que están corriendo y sus puertos (list)
 dk   ps -a ,ls -a        -> Todos los Dockers disponibles (list all)
 dk  -h, h, --help        -> Ayuda (help)
+
 
   Copyright (C) 2020 Angel. uGeek
   ugeekpodcast@gmail.com
