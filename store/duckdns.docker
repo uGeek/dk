@@ -1,0 +1,17 @@
+#   Name:         duckdns         
+#   Date:         17-06-2020          
+#   Tags:         arm64v8-latest, arm32v7-latest, amd64-latest           
+#   url:          https://hub.docker.com/r/linuxserver/duckdns/            
+#                                 
+#   Notes:                  
+#   User:                 
+#   Password:         
+#                                 
+
+docker create \
+  --name=duckdns \
+  -e PGID=1000 -e PUID=1000  \
+  -e SUBDOMAINS=nombre1,nombre2,nombre3 \
+  -e TOKEN=41asdf-547whw-wh452-2h542h \
+  -e TZ=Europe/Madrid \
+  lsioarmhf/duckdns
