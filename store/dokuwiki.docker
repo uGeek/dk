@@ -1,0 +1,22 @@
+File Edit Options Buffers Tools Help                                                                                                                                                          
+#
+#   Name:         dokuwiki
+#   Date:         17-06-2020
+#   Tags:         amd64-latest, arm64v8-latest, arm32v7-latest
+#   url:          https://hub.docker.com/r/linuxserver/dokuwiki
+#
+#   Notes:
+#   User:
+#   Password:
+#
+
+
+
+docker create \
+  --name=dokuwiki \
+  -e PUID=1000 \
+  -e PGID=1000 \
+  -e TZ=Europe/Madrid \
+  -p 86:80 \
+  -v $HOME/docker/dokuwiki:/config \
+  linuxserver/dokuwiki
