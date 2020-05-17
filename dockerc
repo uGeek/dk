@@ -2,7 +2,7 @@
 #
 #  dockerc
 #
-VERSION="v0.9.7.3 16/05/2020"
+VERSION="v0.9.7.4 17/05/2020"
 
 
 
@@ -320,14 +320,34 @@ echo "---------------------------------------"
 echo "Listado de grupo de dockers disponibles"
 echo "---------------------------------------"
 echo ""
-ls -1F $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g 
+ls -1F $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g | nl
 echo ""
 echo ""
-echo -n " ¿A que grupo pertenece?: "  ; read GRUPO
+
+echo -n " ¿A que grupo pertenece?: "  ; read NUMGRUPO
+GRUPO=$(ls -1F  $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g | sed -n ""$NUMGRUPO""p)
 mkdir -p $RUTA_DOCKER_DOTFILE/$GRUPO/
 clear
 echo  " "
-echo -n " ¿Cual es el nombre del docker que quieres crear?: "  ; read NOMBRE
+echo -en "Nombre: " ;         read  NOMBRE
+echo -en "Fecha: " ;          read  FECHA
+echo -en "Tags: " ;           read  TAGS
+echo -en "url: " ;            read  URL
+echo -en "Notas: " ;          read  NOTES
+echo -en "Usuario: " ;        read  USUARIO
+echo -en "Contraseña: " ;     read  CONTRASENAS
+
+echo "#                                 " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#   Name:         $NOMBRE         " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#   Date:         $FECHA          " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#   Tags:         $TAGS           " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#   url:          $URL            " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#                                 " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#   Notes:        $NOTES          " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#   User:         $USUARIO        " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#   Password:     $CONTRASENAS    " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#                                 " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "$RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker"
 $EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
 clear
 echo "El docker $NOMBRE ha sido guardado con éxito!!!"
