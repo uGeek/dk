@@ -2,7 +2,7 @@
 #
 #  dockerc
 #
-VERSION="v0.9.7.4 17/05/2020"
+VERSION="v0.9.7.5 27/07/2020"
 
 
 
@@ -73,8 +73,13 @@ dk   n                   -> Guarda un nuevo docker (new)
 dk   i                   -> Imagenes listadas por creación (image)
 dk   u, up, start        -> Lista dockers con su número para iniciar (up)
 dk   d, down, stop       -> Lista dockers corriendo, con su número para detener (down)
+dk   r, restart          -> Reiniciando docker  
 dk   d -a, stop -a, ...  -> Detener todos los contenedores 
 dk   e, exec             -> Entrar dentro del contenedor
+dk   ip                  -> Conoce la ip de un docker
+dk   ls ip, ip -a        -> Listar todas las ip's
+dk   ls, ps              -> Dockers que están corriendo y sus puertos (list)
+dk   ls -a, ps -a        -> Todos los Dockers disponibles (list all)
 dk   st, store           -> Descarga Dockers de la store de dockerc
 dk   rm                  -> Lista contenedores con su número para ser borrado (remove)
 dk   rmi                 -> Lista imagenes con su número para ser borradas (remove image)
@@ -83,8 +88,6 @@ dk   s, stats            -> Ver consumo de cpu, memoria,... de todos los contene
 dk   s c, stats c        -> Lista contenedores con su número para ver el consumo de cpu, memoria,...
 dk   ss, stats sort      -> Ordena contenedores por cpu, memoria, ...
 dk   p, prune            -> Borrar todos los Contenedores, imágenes, redes, que esten detenidos
-dk   ps,    ls           -> Dockers que están corriendo y sus puertos (list)
-dk   ps -a ,ls -a        -> Todos los Dockers disponibles (list all)
 dk  -h, h, --help        -> Ayuda (help)
 
 
@@ -137,6 +140,17 @@ echo ""
 exit
 fi
 
+if [ "$1" = "ip" ] && [ "$2" = "-a" ] || [ "$1" = "ls" ] && [ "$2" = "ip" ]
+then
+clear
+echo "----------------"
+echo "CONTAINERS IP's"    
+echo "----------------"   
+docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq)
+exit
+fi
+
+
 if [ "$1" = "ls" ] && [ "$2" = "-a" ] || [ "$1" = "ps" ] && [ "$2" = "-a" ] 
 then    
 echo "----------------------"
@@ -173,6 +187,27 @@ echo "    Contenedor $(docker start "$CONTENEDORUP") iniciado"
 echo ""
 exit
 fi
+
+
+if [ "$1" = "r" ] || [ "$1" = "restart" ] 
+then
+echo "----------------------"
+echo "CONTAINERS DISPONIBLES"    
+echo "----------------------"
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/restart.dockerc
+echo ""
+echo -en "    Selecciona el número de contenedor que quieres reiniciar: "
+read CONTENEDOR
+CONTENEDORUP=$(cat ~/.config/dockerc/restart.dockerc | sed -n ""$CONTENEDOR""p)
+echo ""
+echo "    Contenedor $(docker restart "$CONTENEDORUP") reiniciando"
+echo ""
+exit
+fi
+
+
+
 
 if [ "$1" = "d" ] && [ "$2" = "-a" ] || [ "$1" = "stop" ] && [ "$2" = "-a" ] || [ "$1" = "down" ] && [ "$2" = "-a" ] 
 then    
@@ -213,6 +248,25 @@ echo "    Borrado el contenedor $(docker rm "$CONTENEDORUP")"
 echo ""
 exit
 fi
+
+
+if [ "$1" = "ip" ]
+then
+echo "----------------------"
+echo "CONTAINERS DISPONIBLES"    
+echo "----------------------"
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/ip.dockerc
+echo ""
+echo -en "    Selecciona el número de contenedor que quieres reiniciar: "
+read CONTENEDOR
+CONTENEDORUP=$(cat ~/.config/dockerc/ip.dockerc | sed -n ""$CONTENEDOR""p)
+echo ""
+echo "    Ip Contenedor $CONTENEDORUP = $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$CONTENEDORUP")"
+echo ""
+exit
+fi
+
 
 if [ "$1" = "log" ] ||  [ "$1" = "l" ]
 then
