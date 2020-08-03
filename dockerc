@@ -2,7 +2,7 @@
 #
 #  dockerc
 #
-VERSION="v0.9.7.6 29/07/2020"
+VERSION="v0.9.7.8 3/08/2020"
 
 
 
@@ -78,6 +78,7 @@ dk   d -a, stop -a, ...  -> Detener todos los contenedores
 dk   e, exec             -> Entrar dentro del contenedor
 dk   ip                  -> Conoce la ip de un docker
 dk   ls ip, ip -a        -> Listar todas las ip's
+dk   net, red            -> Listar todas las redes
 dk   ls, ps              -> Dockers que están corriendo y sus puertos (list)
 dk   ls -a, ps -a        -> Todos los Dockers disponibles (list all)
 dk   st, store           -> Descarga Dockers de la store de dockerc
@@ -141,6 +142,17 @@ echo ""
 exit
 fi
 
+if [ "$1" = "net" ] || [ "$1" = "red" ]
+then
+echo "--------"
+echo " REDES "
+echo "--------"
+docker network ls
+echo ""
+exit
+fi
+
+
 if [ "$1" = "ip" ] && [ "$2" = "-a" ] || [ "$1" = "ls" ] && [ "$2" = "ip" ]
 then
 clear
@@ -195,8 +207,8 @@ then
 echo "----------------------"
 echo "CONTAINERS DISPONIBLES"    
 echo "----------------------"
-docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
-docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/restart.dockerc
+docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/restart.dockerc
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres reiniciar: "
 read CONTENEDOR
