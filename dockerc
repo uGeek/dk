@@ -2,7 +2,7 @@
 #
 #  dockerc
 #
-VERSION="v0.9.7.8 3/08/2020"
+VERSION="v0.9.8 7/09/2020"
 
 
 
@@ -85,6 +85,9 @@ dk   st, store           -> Descarga Dockers de la store de dockerc
 dk   rm                  -> Lista contenedores con su número para ser borrado (remove)
 dk   drm                 -> Lista contenedores con su número para ser detenido y borrado (down and remove)
 dk   rmi                 -> Lista imagenes con su número para ser borradas (remove image)
+dk   save                -> Exportar imagen en el directorio actual
+dk   load                -> Cargar Imagen del directorio actual
+dk   sload               -> Buscar imagen del directorio actual, filtrando por palabra
 dk   l, log              -> Lista contendores con su número, para ver los logs
 dk   s, stats            -> Ver consumo de cpu, memoria,... de todos los contenedores
 dk   s c, stats c        -> Lista contenedores con su número para ver el consumo de cpu, memoria,...
@@ -478,6 +481,72 @@ echo " "
 echo " "
 echo "-------------------"
 echo " "
+exit
+fi
+
+if [ "$1" = "save" ] 
+then
+echo "----------------"
+echo " GUARDAR IMÁGEN "
+echo "----------------"
+docker images --format 'table {{.Repository}}:{{.Tag}}\t{{.Size}}' | tail -n +2 | nl  2>/dev/null
+docker images --format 'table {{.Repository}}:{{.Tag}}' | tail -n +2 > ~/.config/dockerc/image.dockerc
+echo ""
+echo -en "    Selecciona el número de la imagen que deseas guardar: "
+read CONTENEDOR
+CONTENEDORUP=$(cat ~/.config/dockerc/image.dockerc | sed -n ""$CONTENEDOR""p)
+echo ""
+echo     "    Guardando la imágen $CONTENEDORUP... Espere"    
+echo ""
+echo "    Imagen $CONTENEDORUP, Guardada  $(docker save "$CONTENEDORUP" >  "$(echo $CONTENEDORUP | sed s'|/|-|'g)_$(date +"%Y%m%d")_docker".tar)"
+echo ""
+exit
+fi
+
+if [ "$1" = "load" ] 
+then
+clear
+echo ""
+echo "-------------------------------"
+echo "Listado de Imágenes disponibles"
+echo "-------------------------------"
+echo ""
+ls -1F $PWD  | nl  2>/dev/null
+ls -1F $PWD > ~/.config/dockerc/image.dockerc
+echo ""
+echo -en "    Selecciona el número de la imagen cargar: "
+read CONTENEDOR
+CONTENEDORUP=$(cat ~/.config/dockerc/image.dockerc | sed -n ""$CONTENEDOR""p)
+echo ""
+echo "    Imagen Cargada $(docker load <  "$CONTENEDORUP")"
+echo ""
+exit
+fi
+
+if [ "$1" = "sload" ] 
+then
+clear
+echo ""
+echo "-------------------------------"
+echo "Listado de Imágenes disponibles"
+echo "-------------------------------"
+echo ""
+echo -en " Introduce una palabra para filtrar las imagenes del directorio actual: "
+read NOMBRE
+echo " "
+ls -1F $PWD | grep $NOMBRE | nl  2>/dev/null
+ls -1F $PWD > ~/.config/dockerc/image.dockerc
+echo  " "  
+echo  " "
+echo     "        Si no desdeas cargar ninguna imágen de las listadas, pulsa Ctrl+c"
+echo " "
+echo " "
+echo -en "    Selecciona el número de la imagen cargar: "
+read CONTENEDOR
+CONTENEDORUP=$(cat ~/.config/dockerc/image.dockerc | sed -n ""$CONTENEDOR""p)
+echo ""
+echo "    Imagen Cargada $(docker load <  "$CONTENEDORUP")"
+echo ""
 exit
 fi
 
