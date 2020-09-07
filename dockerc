@@ -69,6 +69,7 @@ Modo de empleo: dockerc [OPCIONES]
 dk                       -> Menú para crear un contendor guardado con docker o docker-compose
 dk   vc                  -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
 dk   a                   -> Automontaje de todos los dockers de un grupo (add)
+dk   dc                  -> Montar un docker-compose (docker-compose up -d)
 dk   n                   -> Guarda un nuevo docker (new)
 dk   i                   -> Imagenes listadas por creación (image)
 dk   u, up, start        -> Lista dockers con su número para iniciar (up)
@@ -142,6 +143,12 @@ docker images --format 'table {{.CreatedSince}}\t{{.Repository}}:{{.Tag}}\t{{.Si
 echo ""
 echo "    $(docker images --format 'table {{.CreatedSince}}\t{{.Repository}}:{{.Tag}}\t{{.Size}}' | tail -n +2 | wc -l) Imagenes en total"
 echo ""
+exit
+fi
+
+if [ "$1" = "dc" ]
+then
+docker-compose up -d
 exit
 fi
 
