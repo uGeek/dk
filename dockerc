@@ -142,6 +142,7 @@ if [ "$1" = "b" ]
 then
 clear
 echo -en "¿Que nombre de imagen quieres utilizar?: "
+read 	NOMBRE
 echo ""
 echo ""
 docker build -t $NOMBRE .
