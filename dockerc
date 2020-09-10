@@ -86,6 +86,8 @@ dk   st, store           -> Descarga Dockers de la store de dockerc
 dk   rm                  -> Lista contenedores con su número para ser borrado (remove)
 dk   drm                 -> Lista contenedores con su número para ser detenido y borrado (down and remove)
 dk   rmi                 -> Lista imagenes con su número para ser borradas (remove image)
+dk   b                   -> Construir una imágen a partir de un Dockerfile
+dk   c                   -> Crear un docker a partir de una imagen
 dk   save                -> Exportar imagen en el directorio actual
 dk   load                -> Cargar Imagen del directorio actual
 dk   sload               -> Buscar imagen del directorio actual, filtrando por palabra
@@ -131,6 +133,35 @@ echo -n "Selecciona el grupo de dockers de automontaje: " ; read GRUPO
 echo " "
 cat $RUTA_DOCKER_DOTFILE/$GRUPO/*.docker > ~/.config/dockerc/dockerc.automount
 /bin/bash ~/.config/dockerc/dockerc.automount
+exit
+fi
+
+
+
+if [ "$1" = "b" ]
+then
+clear
+echo -en "¿Que nombre de imagen quieres utilizar?: "
+echo ""
+echo ""
+docker build -t $NOMBRE .
+exit
+fi
+
+
+if [ "$1" = "c" ]
+then
+clear
+echo -en "Nombre: "
+read NOMBRE
+echo -en "Puertos: "
+read PUERTOS
+echo -en "Volumenes: "
+read VOLUMENES
+echo -en "Imagen: "
+read IMAGEN
+docker create --name=$NOMBRE $PUERTOS $VOLUMENES $IMAGEN
+echo ""
 exit
 fi
 
