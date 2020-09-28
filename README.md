@@ -5,7 +5,7 @@ List your dockers and their ports. List your images by creation date
 ## Install
 
 ```
-sudo curl -L https://raw.githubusercontent.com/uGeek/dockerc/master/dk \
+sudo curl -L https://raw.githubusercontent.com/uGeek/dk/master/dk \
           -o /usr/bin/dk && sudo chmod +x /usr/bin/dk
 ```
 
