@@ -5,14 +5,14 @@ List your dockers and their ports. List your images by creation date
 ## Install
 
 ```
-sudo curl -L https://raw.githubusercontent.com/uGeek/dockerc/master/dockerc \
+sudo curl -L https://raw.githubusercontent.com/uGeek/dockerc/master/dk \
           -o /usr/bin/dk && sudo chmod +x /usr/bin/dk
 ```
 
 
 ## Help
 ```
-Modo de empleo: dockerc [OPCIONES]
+Modo de empleo: dk [OPCIONES]
 
 dk                       -> Menú para crear un contendor guardado con docker o docker-compose
 dk   vc                  -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
