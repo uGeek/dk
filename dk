@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-#  dockerc
+#  dk
 #
 VERSION="v0.9.8 10/09/2020"
 
@@ -17,7 +17,7 @@ then
 echo "" 2>/dev/null
 else
 echo
-echo -e "\e[31mHay una nueva actualización de la aplicación\e[0m \e[1mdockerc\e[0m"
+echo -e "\e[31mHay una nueva actualización de la aplicación\e[0m \e[1mdk\e[0m"
 echo -en "¿Quieres actualizar ahora? [si/No]: "
 read RESPONSE
 if [ $RESPONSE == si ] || [ $RESPONSE == SI ] || [ $RESPONSE == s ] || [ $RESPONSE == S ]
