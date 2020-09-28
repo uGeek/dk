@@ -2,16 +2,15 @@
 #
 #  dk
 #
-VERSION="v0.9.8 10/09/2020"
-
+VERSION="v0.9.9 28/09/2020"
 
 
 
 SOFT=$(diff -q  /usr/bin/dk <(wget -q -O- https://raw.githubusercontent.com/uGeek/dk/master/dk 2>/dev/null))
 
-if [ "$(cat ~/.config/dockerc/last.log 2>/dev/null)" != "$(date +"%Y%m%d")" ]
+if [ "$(cat ~/.config/dk/last.log 2>/dev/null)" != "$(date +"%Y%m%d")" ]
 then
-echo $(date +"%Y%m%d") >  ~/.config/dockerc/last.log
+echo $(date +"%Y%m%d") >  ~/.config/dk/last.log
 if [ "$SOFT" = "" ]
 then
 echo "" 2>/dev/null
@@ -22,7 +21,7 @@ echo -en "¿Quieres actualizar ahora? [si/No]: "
 read RESPONSE
 if [ $RESPONSE == si ] || [ $RESPONSE == SI ] || [ $RESPONSE == s ] || [ $RESPONSE == S ]
 then
-sudo curl -L https://raw.githubusercontent.com/uGeek/dockerc/master/dockerc \
+sudo curl -L https://raw.githubusercontent.com/uGeek/dk/master/dk \
           -o /usr/bin/dk && sudo chmod +x /usr/bin/dk
 clear	  
 echo -e "\n\t\e[1mdk.\e[0m \e[92mVersión $(wget -q -O- https://raw.githubusercontent.com/uGeek/dk/master/dk | grep "^VERSION=" | cut -d "=" -f2 | sed s'|"||'g) actualizada con éxito! \e[0m\n"	  
@@ -36,16 +35,16 @@ fi
 
 
 
-if [ ! -f ~/.config/dockerc/dockerc.conf ]; then
+if [ ! -f ~/.config/dk/dk.conf ]; then
     while true; do
         echo ""
         read -rp "El archivo de configuración no está creado, ¿Quieres crearlo ahora? (s/n) " yn
         case "${yn}" in
-            [Ss]* ) mkdir -p  ~/.config/dockerc/
-		    echo -en "\n Escribe la ruta completa del directorio donde tienes o quieres guardar tus docker-dotfile \n\n\t Ejemplo: /home/usuario/dockerc: "
-		    read RUTA ; echo "RUTA_DOCKER_DOTFILE='"$RUTA"'" > ~/.config/dockerc/dockerc.conf
+            [Ss]* ) mkdir -p  ~/.config/dk/
+		    echo -en "\n Escribe la ruta completa del directorio donde tienes o quieres guardar tus docker-dotfile \n\n\t Ejemplo: /home/usuario/dk: "
+		    read RUTA ; echo "RUTA_DOCKER_DOTFILE='"$RUTA"'" > ~/.config/dk/dk.conf
 		    echo -en "\n ¿Que editor de texto quieres utilizar? \n\n\t Ejemplo: vim: "
-		    read EDITOR ; echo "EDITOR='"$EDITOR"'" >> ~/.config/dockerc/dockerc.conf
+		    read EDITOR ; echo "EDITOR='"$EDITOR"'" >> ~/.config/dk/dk.conf
 		    break;;
             [Nn]* ) exit;;
             * ) echo "Please answer y or n";;
@@ -53,7 +52,7 @@ if [ ! -f ~/.config/dockerc/dockerc.conf ]; then
     done
 fi
 
-source ~/.config/dockerc/dockerc.conf
+source ~/.config/dk/dk.conf
 
 if [ "$1" = "-v" ] || [ "$1" = "--version" ] || [ "$1" = "v" ] 
 then
@@ -82,7 +81,7 @@ dk   ls ip, ip -a        -> Listar todas las ip's
 dk   net, red            -> Listar todas las redes
 dk   ls, ps              -> Dockers que están corriendo y sus puertos (list)
 dk   ls -a, ps -a        -> Todos los Dockers disponibles (list all)
-dk   st, store           -> Descarga Dockers de la store de dockerc
+dk   st, store           -> Descarga Dockers de la store de dk
 dk   rm                  -> Lista contenedores con su número para ser borrado (remove)
 dk   drm                 -> Lista contenedores con su número para ser detenido y borrado (down and remove)
 dk   rmi                 -> Lista imagenes con su número para ser borradas (remove image)
@@ -99,7 +98,7 @@ dk   p, prune            -> Borrar todos los Contenedores, imágenes, redes, que
 dk  -h, h, --help        -> Ayuda (help)
 
 
-dockerc "$VERSION"
+dk "$VERSION"
  Copyright (C) 2020 Angel. uGeek
  ugeekpodcast@gmail.com"
 exit
@@ -110,11 +109,11 @@ then
 SVN=$(dpkg --list | grep -i subversion)
 if [ "$SVN" = "" ]
 then
-echo "Para poder descargar dockers desde el dockerc store, necesitas instalar el paquete subversion"
+echo "Para poder descargar dockers desde el dk store, necesitas instalar el paquete subversion"
 echo "En derivadas de debian, se instala con:"
 echo "   sudo apt install subversion"
 else
-svn export https://github.com/uGeek/dockerc/trunk/store $RUTA_DOCKER_DOTFILE/store --force
+svn export https://github.com/uGeek/dk/trunk/store $RUTA_DOCKER_DOTFILE/store --force
 fi    
 exit
 fi
@@ -131,8 +130,8 @@ ls -1F $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g
 echo ""
 echo -n "Selecciona el grupo de dockers de automontaje: " ; read GRUPO
 echo " "
-cat $RUTA_DOCKER_DOTFILE/$GRUPO/*.docker > ~/.config/dockerc/dockerc.automount
-/bin/bash ~/.config/dockerc/dockerc.automount
+cat $RUTA_DOCKER_DOTFILE/$GRUPO/*.docker > ~/.config/dk/dk.automount
+/bin/bash ~/.config/dk/dk.automount
 exit
 fi
 
@@ -232,11 +231,11 @@ echo "----------------------"
 echo "CONTAINERS DISPONIBLES"    
 echo "----------------------"
 docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
-docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/up.dockerc
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/up.dk
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres iniciar: "
 read CONTENEDOR
-CONTENEDORUP=$(cat ~/.config/dockerc/up.dockerc | sed -n ""$CONTENEDOR""p)
+CONTENEDORUP=$(cat ~/.config/dk/up.dk | sed -n ""$CONTENEDOR""p)
 echo ""
 echo "    Contenedor $(docker start "$CONTENEDORUP") iniciado"
 echo ""
@@ -250,11 +249,11 @@ echo "----------------------"
 echo "CONTAINERS DISPONIBLES"    
 echo "----------------------"
 docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
-docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/restart.dockerc
+docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/restart.dk
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres reiniciar: "
 read CONTENEDOR
-CONTENEDORUP=$(cat ~/.config/dockerc/restart.dockerc | sed -n ""$CONTENEDOR""p)
+CONTENEDORUP=$(cat ~/.config/dk/restart.dk | sed -n ""$CONTENEDOR""p)
 echo ""
 echo "    Contenedor $(docker restart "$CONTENEDORUP") reiniciando"
 echo ""
@@ -276,11 +275,11 @@ echo "--------------------"
 echo "CONTAINERS CORRIENDO"    
 echo "--------------------"
 docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
-docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/down.dockerc
+docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/down.dk
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres detener: "
 read CONTENEDOR
-CONTENEDORUP=$(cat ~/.config/dockerc/down.dockerc | sed -n ""$CONTENEDOR""p)
+CONTENEDORUP=$(cat ~/.config/dk/down.dk | sed -n ""$CONTENEDOR""p)
 echo ""
 echo "    Detenido el contenedor $(docker stop "$CONTENEDORUP")"
 echo ""
@@ -293,11 +292,11 @@ echo "------------------"
 echo "BORRAR CONTAINERS "
 echo "------------------"
 docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
-docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/remove.dockerc
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/remove.dk
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres borrar: "
 read CONTENEDOR
-CONTENEDORUP=$(cat ~/.config/dockerc/remove.dockerc | sed -n ""$CONTENEDOR""p)
+CONTENEDORUP=$(cat ~/.config/dk/remove.dk | sed -n ""$CONTENEDOR""p)
 echo ""
 echo "    Borrado el contenedor $(docker rm "$CONTENEDORUP")"
 echo ""
@@ -310,11 +309,11 @@ echo "------------------"
 echo "BORRAR CONTAINERS "
 echo "------------------"
 docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
-docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/remove.dockerc
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/remove.dk
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres borrar: "
 read CONTENEDOR
-CONTENEDORUP=$(cat ~/.config/dockerc/remove.dockerc | sed -n ""$CONTENEDOR""p)
+CONTENEDORUP=$(cat ~/.config/dk/remove.dk | sed -n ""$CONTENEDOR""p)
 echo ""
 echo "    Detenido el contenedor $(docker stop "$CONTENEDORUP")"
 echo ""
@@ -331,11 +330,11 @@ echo "----------------------"
 echo "CONTAINERS DISPONIBLES"    
 echo "----------------------"
 docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
-docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/ip.dockerc
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/ip.dk
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres reiniciar: "
 read CONTENEDOR
-CONTENEDORUP=$(cat ~/.config/dockerc/ip.dockerc | sed -n ""$CONTENEDOR""p)
+CONTENEDORUP=$(cat ~/.config/dk/ip.dk | sed -n ""$CONTENEDOR""p)
 echo ""
 echo "    Ip Contenedor $CONTENEDORUP = $(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$CONTENEDORUP")"
 echo ""
@@ -349,11 +348,11 @@ echo "---------------"
 echo "log CONTAINERS "
 echo "---------------"
 docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
-docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/logs.dockerc
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/logs.dk
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres ver los logs: "
 read CONTENEDOR
-CONTENEDORUP=$(cat ~/.config/dockerc/logs.dockerc | sed -n ""$CONTENEDOR""p)
+CONTENEDORUP=$(cat ~/.config/dk/logs.dk | sed -n ""$CONTENEDOR""p)
 echo ""
 echo "    log del contenedor $(docker logs -f "$CONTENEDORUP")"
 echo ""
@@ -366,11 +365,11 @@ echo "--------------------------------------------"
 echo "Entrar o ejecutar un comando del contenedor "
 echo "--------------------------------------------"
 docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
-docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/exec.dockerc
+docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/exec.dk
 echo ""
 echo -en "    Selecciona el número del contenedor que quieres entrar: "
 read CONTENEDOR
-CONTENEDORUP=$(cat ~/.config/dockerc/exec.dockerc | sed -n ""$CONTENEDOR""p)
+CONTENEDORUP=$(cat ~/.config/dk/exec.dk | sed -n ""$CONTENEDOR""p)
 echo ""
 docker exec -it "$CONTENEDORUP" sh
 echo ""
@@ -384,11 +383,11 @@ echo "----------------"
 echo "BORRAR IMAGENES "
 echo "----------------"
 docker images --format 'table {{.Repository}}:{{.Tag}}\t{{.Size}}' | tail -n +2 | nl  2>/dev/null
-docker images --format 'table {{.Repository}}:{{.Tag}}' | tail -n +2 > ~/.config/dockerc/image.dockerc
+docker images --format 'table {{.Repository}}:{{.Tag}}' | tail -n +2 > ~/.config/dk/image.dk
 echo ""
 echo -en "    Selecciona el número de la imagen que deseas borrar: "
 read CONTENEDOR
-CONTENEDORUP=$(cat ~/.config/dockerc/image.dockerc | sed -n ""$CONTENEDOR""p)
+CONTENEDORUP=$(cat ~/.config/dk/image.dk | sed -n ""$CONTENEDOR""p)
 echo ""
 echo "    Borrada la imagen $(docker rmi "$CONTENEDORUP")"
 echo ""
@@ -418,11 +417,11 @@ echo "---------------"
 echo "log CONTAINERS "
 echo "---------------"
 docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
-docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dockerc/stats.dockerc
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/stats.dk
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres ver su cpu, memoria, ... "
 read CONTENEDOR
-CONTENEDORUP=$(cat ~/.config/dockerc/stats.dockerc | sed -n ""$CONTENEDOR""p)
+CONTENEDORUP=$(cat ~/.config/dk/stats.dk | sed -n ""$CONTENEDOR""p)
 docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemPerc}}\t{{.NetIO}}" "$CONTENEDORUP"
 exit
 fi
@@ -529,11 +528,11 @@ echo "----------------"
 echo " GUARDAR IMÁGEN "
 echo "----------------"
 docker images --format 'table {{.Repository}}:{{.Tag}}\t{{.Size}}' | tail -n +2 | nl  2>/dev/null
-docker images --format 'table {{.Repository}}:{{.Tag}}' | tail -n +2 > ~/.config/dockerc/image.dockerc
+docker images --format 'table {{.Repository}}:{{.Tag}}' | tail -n +2 > ~/.config/dk/image.dk
 echo ""
 echo -en "    Selecciona el número de la imagen que deseas guardar: "
 read CONTENEDOR
-CONTENEDORUP=$(cat ~/.config/dockerc/image.dockerc | sed -n ""$CONTENEDOR""p)
+CONTENEDORUP=$(cat ~/.config/dk/image.dk | sed -n ""$CONTENEDOR""p)
 echo ""
 echo     "    Guardando la imágen $CONTENEDORUP... Espere"    
 echo ""
@@ -551,11 +550,11 @@ echo "Listado de Imágenes disponibles"
 echo "-------------------------------"
 echo ""
 ls -1F $PWD  | nl  2>/dev/null
-ls -1F $PWD > ~/.config/dockerc/image.dockerc
+ls -1F $PWD > ~/.config/dk/image.dk
 echo ""
 echo -en "    Selecciona el número de la imagen cargar: "
 read CONTENEDOR
-CONTENEDORUP=$(cat ~/.config/dockerc/image.dockerc | sed -n ""$CONTENEDOR""p)
+CONTENEDORUP=$(cat ~/.config/dk/image.dk | sed -n ""$CONTENEDOR""p)
 echo ""
 echo "    Imagen Cargada $(docker load <  "$CONTENEDORUP")"
 echo ""
@@ -574,7 +573,7 @@ echo -en " Introduce una palabra para filtrar las imagenes del directorio actual
 read NOMBRE
 echo " "
 ls -1F $PWD | grep $NOMBRE | nl  2>/dev/null
-ls -1F $PWD > ~/.config/dockerc/image.dockerc
+ls -1F $PWD > ~/.config/dk/image.dk
 echo  " "  
 echo  " "
 echo     "        Si no desdeas cargar ninguna imágen de las listadas, pulsa Ctrl+c"
@@ -582,7 +581,7 @@ echo " "
 echo " "
 echo -en "    Selecciona el número de la imagen cargar: "
 read CONTENEDOR
-CONTENEDORUP=$(cat ~/.config/dockerc/image.dockerc | sed -n ""$CONTENEDOR""p)
+CONTENEDORUP=$(cat ~/.config/dk/image.dk | sed -n ""$CONTENEDOR""p)
 echo ""
 echo "    Imagen Cargada $(docker load <  "$CONTENEDORUP")"
 echo ""
