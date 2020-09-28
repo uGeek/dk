@@ -7,7 +7,7 @@ VERSION="v0.9.8 10/09/2020"
 
 
 
-SOFT=$(diff -q  /usr/bin/dk <(wget -q -O- https://raw.githubusercontent.com/uGeek/dockerc/master/dockerc 2>/dev/null))
+SOFT=$(diff -q  /usr/bin/dk <(wget -q -O- https://raw.githubusercontent.com/uGeek/dk/master/dk 2>/dev/null))
 
 if [ "$(cat ~/.config/dockerc/last.log 2>/dev/null)" != "$(date +"%Y%m%d")" ]
 then
@@ -25,7 +25,7 @@ then
 sudo curl -L https://raw.githubusercontent.com/uGeek/dockerc/master/dockerc \
           -o /usr/bin/dk && sudo chmod +x /usr/bin/dk
 clear	  
-echo -e "\n\t\e[1mdockerc.\e[0m \e[92mVersión $(wget -q -O- https://raw.githubusercontent.com/uGeek/dockerc/master/dockerc | grep "^VERSION=" | cut -d "=" -f2 | sed s'|"||'g) actualizada con éxito! \e[0m\n"	  
+echo -e "\n\t\e[1mdk.\e[0m \e[92mVersión $(wget -q -O- https://raw.githubusercontent.com/uGeek/dk/master/dk | grep "^VERSION=" | cut -d "=" -f2 | sed s'|"||'g) actualizada con éxito! \e[0m\n"	  
 else 
 echo ""
 fi
@@ -64,7 +64,7 @@ fi
 if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$1" = "h" ]
 then
 echo "
-Modo de empleo: dockerc [OPCIONES]
+Modo de empleo: dk [OPCIONES]
 
 dk                       -> Menú para crear un contendor guardado con docker o docker-compose
 dk   vc                  -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
