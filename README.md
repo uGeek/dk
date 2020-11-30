@@ -18,8 +18,13 @@ dk                       -> Menú para crear un contendor guardado con docker o 
 dk   vc                  -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
 dk   a                   -> Automontaje de todos los dockers de un grupo (add)
 dk   dc                  -> Montar un docker-compose (docker-compose up -d)
+dk   dc d                -> Detener con docker-compose y volumenes (docker-compose down) 
+dk   dc dv               -> Eliminar con docker-compose y volumenes (docker-compose down -v) 
+dk   dc l                -> Docker-Compose logs
+dk   dc rm               -> Eliminar docker-compose detenidos
 dk   n                   -> Guarda un nuevo docker (new)
 dk   i                   -> Imagenes listadas por creación (image)
+dk   t                   -> Cambiar nombre de imagen
 dk   u, up, start        -> Lista dockers con su número para iniciar (up)
 dk   d, down, stop       -> Lista dockers corriendo, con su número para detener (down)
 dk   r, restart          -> Reiniciando docker  
@@ -30,10 +35,12 @@ dk   ls ip, ip -a        -> Listar todas las ip's
 dk   net, red            -> Listar todas las redes
 dk   ls, ps              -> Dockers que están corriendo y sus puertos (list)
 dk   ls -a, ps -a        -> Todos los Dockers disponibles (list all)
-dk   st, store           -> Descarga Dockers de la store de dockerc
+dk   st, store           -> Descarga Dockers de la store de dk
 dk   rm                  -> Lista contenedores con su número para ser borrado (remove)
 dk   drm                 -> Lista contenedores con su número para ser detenido y borrado (down and remove)
 dk   rmi                 -> Lista imagenes con su número para ser borradas (remove image)
+dk   b                   -> Construir una imágen a partir de un Dockerfile
+dk   c                   -> Crear un docker a partir de una imagen
 dk   save                -> Exportar imagen en el directorio actual
 dk   load                -> Cargar Imagen del directorio actual
 dk   sload               -> Buscar imagen del directorio actual, filtrando por palabra
@@ -42,11 +49,18 @@ dk   s, stats            -> Ver consumo de cpu, memoria,... de todos los contene
 dk   s c, stats c        -> Lista contenedores con su número para ver el consumo de cpu, memoria,...
 dk   ss, stats sort      -> Ordena contenedores por cpu, memoria, ...
 dk   p, prune            -> Borrar todos los Contenedores, imágenes, redes, que esten detenidos
+dk   install ubuntu      -> Instalalar Docker y docker-compose en Ubuntu
+dk   install debian      -> Instalalar Docker y docker-compose en Debian
+dk   install armhf       -> Instalalar Docker y docker-compose en armhf (Raspberry)
+dk   install arm64       -> Instalalar Docker y docker-compose en arm64
+dk   install             -> Instalalar Docker y docker-compose para derivadas de Debian desde los repositorios
 dk  -h, h, --help        -> Ayuda (help)
 
 
-  Copyright (C) 2020 Angel. uGeek
-  ugeekpodcast@gmail.com
+dk v0.9.91 29/11/2020
+ Copyright (C) 2020 Angel. uGeek
+ ugeekpodcast@gmail.com
+
 ```
 
 ## Contact
