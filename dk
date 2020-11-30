@@ -1,8 +1,8 @@
-#!/bin/bash
+9#!/bin/bash
 #
 #  dk
 #
-VERSION="v0.9.9 28/09/2020"
+VERSION="v0.9.91 29/11/2020"
 
 
 
@@ -24,7 +24,7 @@ then
 sudo curl -L https://raw.githubusercontent.com/uGeek/dk/master/dk \
           -o /usr/bin/dk && sudo chmod +x /usr/bin/dk
 clear	  
-echo -e "\n\t\e[1mdk.\e[0m \e[92mVersión $(wget -q -O- https://raw.githubusercontent.com/uGeek/dk/master/dk | grep "^VERSION=" | cut -d "=" -f2 | sed s'|"||'g) actualizada con éxito! \e[0m\n"	  
+echo -e "\n\t\e[1mdk.\e[0m \e[92mVersión $(wget -q -O- https://raw.githubusercontent.com/uGeek/dk/master/dk | grep "^VERSION=" | cut -d "=" -f2 | sed s'|"||'g) actualizada con éxito! \e[0m\n"  
 else 
 echo ""
 fi
@@ -69,8 +69,13 @@ dk                       -> Menú para crear un contendor guardado con docker o 
 dk   vc                  -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
 dk   a                   -> Automontaje de todos los dockers de un grupo (add)
 dk   dc                  -> Montar un docker-compose (docker-compose up -d)
+dk   dc d                -> Detener con docker-compose y volumenes (docker-compose down) 
+dk   dc dv               -> Eliminar con docker-compose y volumenes (docker-compose down -v) 
+dk   dc l                -> Docker-Compose logs
+dk   dc rm               -> Eliminar docker-compose detenidos
 dk   n                   -> Guarda un nuevo docker (new)
 dk   i                   -> Imagenes listadas por creación (image)
+dk   t                   -> Cambiar nombre de imagen
 dk   u, up, start        -> Lista dockers con su número para iniciar (up)
 dk   d, down, stop       -> Lista dockers corriendo, con su número para detener (down)
 dk   r, restart          -> Reiniciando docker  
@@ -95,6 +100,11 @@ dk   s, stats            -> Ver consumo de cpu, memoria,... de todos los contene
 dk   s c, stats c        -> Lista contenedores con su número para ver el consumo de cpu, memoria,...
 dk   ss, stats sort      -> Ordena contenedores por cpu, memoria, ...
 dk   p, prune            -> Borrar todos los Contenedores, imágenes, redes, que esten detenidos
+dk   install ubuntu      -> Instalalar Docker y docker-compose en Ubuntu
+dk   install debian      -> Instalalar Docker y docker-compose en Debian
+dk   install armhf       -> Instalalar Docker y docker-compose en armhf (Raspberry)
+dk   install arm64       -> Instalalar Docker y docker-compose en arm64
+dk   install             -> Instalalar Docker y docker-compose para derivadas de Debian desde los repositorios
 dk  -h, h, --help        -> Ayuda (help)
 
 
@@ -177,11 +187,185 @@ echo ""
 exit
 fi
 
+
+if [ "$1" = "install" ] && [ "$2" = "ubuntu" ]
+then
+sudo apt update
+sudo apt -y install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+sudo curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+
+sudo add-apt-repository \
+        "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+sudo apt update
+sudo apt -y install docker-ce
+sudo systemctl enable docker
+sudo systemctl start docker
+
+
+sudo groupadd docker
+
+echo -en "    Escribe el nombre de usuario para gestionar docker: "
+read USUARIO
+sudo usermod -aG docker $USUARIO
+
+sudo apt install python3-pip
+sudo pip3 install docker-compose
+clear
+docker -v
+docker-compose -v
+exit
+fi
+
+
+
+if [ "$1" = "install" ] && [ "$2" = "debian" ]
+then
+sudo apt update
+sudo apt -y install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+sudo curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+ sudo add-apt-repository \
+	    "deb [arch=amd64] https://download.docker.com/linux/debian \
+$(lsb_release -cs) \
+stable"
+sudo apt update
+sudo apt -y install docker-ce
+sudo systemctl enable docker
+sudo systemctl start docker
+
+
+sudo groupadd docker
+
+echo -en "    Escribe el nombre de usuario para gestionar docker: "
+read USUARIO
+sudo usermod -aG docker $USUARIO
+
+sudo apt install python3-pip
+sudo pip3 install docker-compose
+clear
+docker -v
+docker-compose -v
+exit
+fi
+
+if [ "$1" = "install" ] && [ "$2" = "arm64" ]
+then
+sudo apt update
+sudo apt -y install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+sudo curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+
+sudo add-apt-repository \
+        "deb [arch=arm64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+sudo apt update
+sudo apt -y install docker-ce
+sudo systemctl enable docker
+sudo systemctl start docker
+
+
+sudo groupadd docker
+
+echo -en "    Escribe el nombre de usuario para gestionar docker: "
+read USUARIO
+sudo usermod -aG docker $USUARIO
+
+sudo apt install python3-pip
+sudo pip3 install docker-compose
+clear
+docker -v
+docker-compose -v
+exit
+fi
+
+
+if [ "$1" = "install" ] && [ "$2" = "armhf" ]
+then
+sudo apt update
+sudo apt install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+sudo curl -fsSL https://download.docker.com/linux/$(. /etc/os-release; echo "$ID")/gpg | sudo apt-key add -
+sudo echo "deb [arch=armhf] https://download.docker.com/linux/$(. /etc/os-release; echo "$ID") \
+     $(lsb_release -cs) stable" | \
+    sudo tee /etc/apt/sources.list.d/docker.list
+sudo apt update
+sudo apt install docker-ce
+sudo systemctl enable docker
+sudo systemctl start docker
+
+sudo groupadd docker
+
+echo -en "    Escribe el nombre de usuario para gestionar docker: "
+read USUARIO
+sudo usermod -aG docker $USUARIO
+
+sudo apt install python3-pip
+sudo pip3 install docker-compose
+clear
+docker -v
+docker-compose -v
+exit
+fi
+
+if [ "$1" = "install" ]
+then
+sudo apt update
+sudo apt upgrade
+
+sudo apt update
+sudo apt install docker.io
+
+sudo systemctl enable docker
+sudo systemctl start docker
+
+sudo groupadd docker
+
+echo -en "    Escribe el nombre de usuario para gestionar docker: "
+read USUARIO
+sudo usermod -aG docker $USUARIO
+
+sudo apt install python3-pip
+sudo pip3 install docker-compose
+clear
+docker -v
+docker-compose -v
+exit
+fi
+
+
 if [ "$1" = "dc" ]
 then
 docker-compose up -d
 exit
 fi
+
+if [ "$1" = "dc" ] && [ "$2" = "d" ]
+then
+docker-compose down
+exit
+fi
+
+if [ "$1" = "dcd" ] && [ "$2" = "dv" ]
+then
+docker-compose down -v
+exit
+fi
+
+
+if [ "$1" = "dc" ] && [ "$2" = "l" ]
+then
+docker-compose logs -f -t
+exit
+fi
+
+if [ "$1" = "dc" ] && [ "$2" = "rm" ]
+then
+docker-compose rm
+exit
+fi
+
 
 if [ "$1" = "net" ] || [ "$1" = "red" ]
 then
@@ -393,6 +577,26 @@ echo "    Borrada la imagen $(docker rmi "$CONTENEDORUP")"
 echo ""
 exit
 fi
+
+if [ "$1" = "t" ]
+then
+echo "----------"
+echo " IMAGENES "
+echo "----------"
+docker images --format 'table {{.Repository}}:{{.Tag}}\t{{.Size}}' | tail -n +2 | nl  2>/dev/null
+docker images --format 'table {{.Repository}}:{{.Tag}}' | tail -n +2 > ~/.config/dk/image.dk
+echo ""
+echo -en "    Selecciona el número de la imagen que deseas cambiar el nombre: "
+read CONTENEDOR
+CONTENEDORUP=$(cat ~/.config/dk/image.dk | sed -n ""$CONTENEDOR""p)
+echo ""
+echo -en "    Introduce el nuevo nombre de imagen: "
+read NOMBRE
+echo "    Borrada la imagen $(docker tag "$CONTENEDORUP" "$NOMBRE")"
+echo ""
+exit
+fi
+
 
 if [ "$1" = "stats" ] && [ "$2" = "sort" ] || [ "$1" = "ss" ]
 then
