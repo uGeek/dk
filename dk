@@ -2,15 +2,16 @@
 #
 #  dk
 #
-VERSION="v0.9.91 29/11/2020"
+VERSION="v0.9.9.2   1/12/2020"
 
 
 
 SOFT=$(diff -q  /usr/bin/dk <(wget -q -O- https://raw.githubusercontent.com/uGeek/dk/master/dk 2>/dev/null))
 
-if [ "$(cat ~/.config/dk/last.log 2>/dev/null)" != "$(date +"%Y%m%d")" ]
+if [ "$(cat ~/.config/dk/last.log 2>/dev/null)" != "$(date +"%Y%m%d")" ] 
 then
-echo $(date +"%Y%m%d") >  ~/.config/dk/last.log
+mkdir -p ~/.config/dk    
+echo $(date +"%Y%m%d") >  ~/.config/dk/last.log  2>/dev/null
 if [ "$SOFT" = "" ]
 then
 echo "" 2>/dev/null
@@ -45,6 +46,7 @@ if [ ! -f ~/.config/dk/dk.conf ]; then
 		    read RUTA ; echo "RUTA_DOCKER_DOTFILE='"$RUTA"'" > ~/.config/dk/dk.conf
 		    echo -en "\n ¿Que editor de texto quieres utilizar? \n\n\t Ejemplo: vim: "
 		    read EDITOR ; echo "EDITOR='"$EDITOR"'" >> ~/.config/dk/dk.conf
+		    mkdir -p $RUTA
 		    break;;
             [Nn]* ) exit;;
             * ) echo "Please answer y or n";;
