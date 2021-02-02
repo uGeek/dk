@@ -86,6 +86,7 @@ dk   d, down, stop       -> Lista dockers corriendo, con su número para detener
 dk   r, restart          -> Reiniciando docker  
 dk   d -a, stop -a, ...  -> Detener todos los contenedores 
 dk   e, exec             -> Entrar dentro del contenedor
+dk   eb, execb           -> Entrar dentro del contenedor con bash
 dk   ip                  -> Conoce la ip de un docker
 dk   ls ip, ip -a        -> Listar todas las ip's
 dk   net, red            -> Listar todas las redes
@@ -577,6 +578,24 @@ docker exec -it "$CONTENEDORUP" sh
 echo ""
 exit
 fi
+
+if [ "$1" = "execb" ] ||  [ "$1" = "eb" ]
+then
+echo "--------------------------------------------"
+echo "Entrar o ejecutar un comando del contenedor "
+echo "--------------------------------------------"
+docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl  | grep "$2" 2>/dev/null
+docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/exec.dk
+echo ""
+echo -en "    Selecciona el número del contenedor que quieres entrar: "
+read CONTENEDOR
+CONTENEDORUP=$(cat ~/.config/dk/exec.dk | sed -n ""$CONTENEDOR""p)
+echo ""
+docker exec -it "$CONTENEDORUP" bash
+echo ""
+exit
+fi
+
 
 
 if [ "$1" = "rmi" ]
