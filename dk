@@ -2,7 +2,7 @@
 #
 #  dk
 #
-VERSION="v0.9.9.2   1/12/2020"
+VERSION="v0.9.9.3   2/2/2021"
 
 
 
@@ -35,7 +35,6 @@ fi
 
 
 
-
 if [ ! -f ~/.config/dk/dk.conf ]; then
     while true; do
         echo ""
@@ -62,19 +61,19 @@ echo "$VERSION"
 exit
 fi
 
-if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$1" = "h" ]
+if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$1" = "h" ] || [ "$1" = "" ]
 then
 echo "
 Modo de empleo: dk [OPCIONES]
 
-dk                       -> Menú para crear un contendor guardado con docker o docker-compose
+dk   dk                  -> Menú para crear un contendor guardado con docker o docker-compose
 dk   vc                  -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
 dk   a                   -> Automontaje de todos los dockers de un grupo (add)
 dk   dc                  -> Montar un docker-compose (docker-compose up -d)
-dk   dc d                -> Detener con docker-compose y volumenes (docker-compose down) 
-dk   dc dv               -> Eliminar con docker-compose y volumenes (docker-compose down -v) 
-dk   dc l                -> Docker-Compose logs
-dk   dc rm               -> Eliminar docker-compose detenidos
+dk   dcd                 -> Detener con docker-compose y volumenes (docker-compose down) 
+dk   dcv                 -> Eliminar con docker-compose y volumenes (docker-compose down -v) 
+dk   dcl                 -> Docker-Compose logs
+dk   dcrm                -> Eliminar docker-compose detenidos
 dk   n                   -> Guarda un nuevo docker (new)
 dk   i                   -> Imagenes listadas por creación (image)
 dk   t                   -> Cambiar nombre de imagen
@@ -110,6 +109,17 @@ dk   install             -> Instalalar Docker y docker-compose para derivadas de
 dk  -h, h, --help        -> Ayuda (help)
 
 
+  Ejemplos:
+ 
+    dk u                  ->  Iniciar contenedor
+    dk u web              ->  Iniciar contenedor, muestra lista filtrada por web
+
+   Esta opción de filtrado funciona con dentener contenedores, listar imágenes, redes,...                
+
+    dk b                  ->  Construir un Dockerfile
+    dk b ugeek/webdav:arm ->  Construir un Dockerfile con el nombre ugeek/webdav:arm
+
+   
 dk "$VERSION"
  Copyright (C) 2020 Angel. uGeek
  ugeekpodcast@gmail.com"
@@ -149,14 +159,14 @@ fi
 
 
 
-if [ "$1" = "b" ]
+if [ "$1" = "b" ] 
 then
 clear
 echo -en "¿Que nombre de imagen quieres utilizar?: "
 read 	NOMBRE
 echo ""
 echo ""
-docker build -t $NOMBRE .
+docker build -t $2$NOMBRE .
 exit
 fi
 
@@ -177,12 +187,13 @@ echo ""
 exit
 fi
 
+
 if [ "$1" = "i" ]
 then
 echo "--------"
 echo "IMAGENES"
 echo "--------"
-docker images --format 'table {{.CreatedSince}}\t{{.Repository}}:{{.Tag}}\t{{.Size}}'
+docker images --format 'table {{.CreatedSince}}\t{{.Repository}}:{{.Tag}}\t{{.Size}}'  | grep "$2"
 echo ""
 echo "    $(docker images --format 'table {{.CreatedSince}}\t{{.Repository}}:{{.Tag}}\t{{.Size}}' | tail -n +2 | wc -l) Imagenes en total"
 echo ""
@@ -343,26 +354,26 @@ docker-compose up -d
 exit
 fi
 
-if [ "$1" = "dc" ] && [ "$2" = "d" ]
+if [ "$1" = "dc" ] && [ "$2" = "d" ] || [ "$1" = "dcd" ]
 then
 docker-compose down
 exit
 fi
 
-if [ "$1" = "dcd" ] && [ "$2" = "dv" ]
+if [ "$1" = "dcv" ]
 then
 docker-compose down -v
 exit
 fi
 
 
-if [ "$1" = "dc" ] && [ "$2" = "l" ]
+if [ "$1" = "dcl" ] 
 then
-docker-compose logs -f -t
+docker-compose logs -f -t | grep "$2"
 exit
 fi
 
-if [ "$1" = "dc" ] && [ "$2" = "rm" ]
+if [ "$1" = "dcrm" ]
 then
 docker-compose rm
 exit
@@ -374,7 +385,7 @@ then
 echo "--------"
 echo " REDES "
 echo "--------"
-docker network ls
+docker network ls  | grep "$2"
 echo ""
 exit
 fi
@@ -386,7 +397,7 @@ clear
 echo "----------------"
 echo "CONTAINERS IP's"    
 echo "----------------"   
-docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq)
+docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps -aq) 
 exit
 fi
 
@@ -406,17 +417,17 @@ then
 echo "----------------------------------"
 echo "CONTAINERS CORRIENDO Y SUS PUERTOS"    
 echo "----------------------------------"
-docker ps --format 'table {{.Names}}\t{{.Ports}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps --format 'table {{.Names}}\t{{.Ports}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl | grep "$2" 2>/dev/null
 echo ""
 exit
 fi
 
-if [ "$1" = "u" ] || [ "$1" = "start" ] || [ "$1" = "up" ] 
+if [ "$1" = "u" ] || [ "$1" = "start" ] || [ "$1" = "up" ]
 then
 echo "----------------------"
 echo "CONTAINERS DISPONIBLES"    
 echo "----------------------"
-docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl | grep "$2" 2>/dev/null
 docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/up.dk
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres iniciar: "
@@ -434,7 +445,7 @@ then
 echo "----------------------"
 echo "CONTAINERS DISPONIBLES"    
 echo "----------------------"
-docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl  | grep "$2" 2>/dev/null
 docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/restart.dk
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres reiniciar: "
@@ -455,12 +466,13 @@ docker stop $(docker ps -q)
 exit
 fi
 
+
 if [ "$1" = "d" ] || [ "$1" = "stop" ] || [ "$1" = "down" ] 
 then
 echo "--------------------"
 echo "CONTAINERS CORRIENDO"    
 echo "--------------------"
-docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl  | grep "$2" 2>/dev/null
 docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/down.dk
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres detener: "
@@ -477,7 +489,7 @@ then
 echo "------------------"
 echo "BORRAR CONTAINERS "
 echo "------------------"
-docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl  | grep "$2" 2>/dev/null
 docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/remove.dk
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres borrar: "
@@ -494,7 +506,7 @@ then
 echo "------------------"
 echo "BORRAR CONTAINERS "
 echo "------------------"
-docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl  | grep "$2" 2>/dev/null
 docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/remove.dk
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres borrar: "
@@ -515,7 +527,7 @@ then
 echo "----------------------"
 echo "CONTAINERS DISPONIBLES"    
 echo "----------------------"
-docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl | grep "$2" 2>/dev/null
 docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/ip.dk
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres reiniciar: "
@@ -533,7 +545,7 @@ then
 echo "---------------"
 echo "log CONTAINERS "
 echo "---------------"
-docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl  | grep "$2" 2>/dev/null
 docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/logs.dk
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres ver los logs: "
@@ -550,7 +562,7 @@ then
 echo "--------------------------------------------"
 echo "Entrar o ejecutar un comando del contenedor "
 echo "--------------------------------------------"
-docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl  | grep "$2" 2>/dev/null
 docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/exec.dk
 echo ""
 echo -en "    Selecciona el número del contenedor que quieres entrar: "
@@ -568,7 +580,7 @@ then
 echo "----------------"
 echo "BORRAR IMAGENES "
 echo "----------------"
-docker images --format 'table {{.Repository}}:{{.Tag}}\t{{.Size}}' | tail -n +2 | nl  2>/dev/null
+docker images --format 'table {{.Repository}}:{{.Tag}}\t{{.Size}}' | tail -n +2 | nl  | grep "$2" 2>/dev/null
 docker images --format 'table {{.Repository}}:{{.Tag}}' | tail -n +2 > ~/.config/dk/image.dk
 echo ""
 echo -en "    Selecciona el número de la imagen que deseas borrar: "
@@ -585,7 +597,7 @@ then
 echo "----------"
 echo " IMAGENES "
 echo "----------"
-docker images --format 'table {{.Repository}}:{{.Tag}}\t{{.Size}}' | tail -n +2 | nl  2>/dev/null
+docker images --format 'table {{.Repository}}:{{.Tag}}\t{{.Size}}' | tail -n +2 | nl | grep "$2" 2>/dev/null
 docker images --format 'table {{.Repository}}:{{.Tag}}' | tail -n +2 > ~/.config/dk/image.dk
 echo ""
 echo -en "    Selecciona el número de la imagen que deseas cambiar el nombre: "
@@ -594,7 +606,7 @@ CONTENEDORUP=$(cat ~/.config/dk/image.dk | sed -n ""$CONTENEDOR""p)
 echo ""
 echo -en "    Introduce el nuevo nombre de imagen: "
 read NOMBRE
-echo "    Borrada la imagen $(docker tag "$CONTENEDORUP" "$NOMBRE")"
+echo "          Imagen renombrada $(docker tag "$CONTENEDORUP" "$NOMBRE")"
 echo ""
 exit
 fi
@@ -622,7 +634,7 @@ then
 echo "---------------"
 echo "log CONTAINERS "
 echo "---------------"
-docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl 2>/dev/null
+docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl  | grep "$3" 2>/dev/null
 docker ps -a --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/stats.dk
 echo ""
 echo -en "    Selecciona el número de contenedor que quieres ver su cpu, memoria, ... "
@@ -733,7 +745,7 @@ then
 echo "----------------"
 echo " GUARDAR IMÁGEN "
 echo "----------------"
-docker images --format 'table {{.Repository}}:{{.Tag}}\t{{.Size}}' | tail -n +2 | nl  2>/dev/null
+docker images --format 'table {{.Repository}}:{{.Tag}}\t{{.Size}}' | tail -n +2 | nl | grep "$2" 2>/dev/null
 docker images --format 'table {{.Repository}}:{{.Tag}}' | tail -n +2 > ~/.config/dk/image.dk
 echo ""
 echo -en "    Selecciona el número de la imagen que deseas guardar: "
@@ -755,7 +767,7 @@ echo "-------------------------------"
 echo "Listado de Imágenes disponibles"
 echo "-------------------------------"
 echo ""
-ls -1F $PWD  | nl  2>/dev/null
+ls -1F $PWD  | nl | grep "$2"  2>/dev/null
 ls -1F $PWD > ~/.config/dk/image.dk
 echo ""
 echo -en "    Selecciona el número de la imagen cargar: "
@@ -767,32 +779,37 @@ echo ""
 exit
 fi
 
-if [ "$1" = "sload" ] 
+#   if [ "$1" = "sload" ] 
+#   then
+#   clear
+#   echo ""
+#   echo "-------------------------------"
+#   echo "Listado de Imágenes disponibles"
+#   echo "-------------------------------"
+#   echo ""
+#   echo -en " Introduce una palabra para filtrar las imagenes del directorio actual: "
+#   read NOMBRE
+#   echo " "
+#   ls -1F $PWD | grep $NOMBRE | nl  2>/dev/null
+#   ls -1F $PWD > ~/.config/dk/image.dk
+#   echo  " "  
+#   echo  " "
+#   echo     "        Si no desdeas cargar ninguna imágen de las listadas, pulsa Ctrl+c"
+#   echo " "
+#   echo " "
+#   echo -en "    Selecciona el número de la imagen cargar: "
+#   read CONTENEDOR
+#   CONTENEDORUP=$(cat ~/.config/dk/image.dk | sed -n ""$CONTENEDOR""p)
+#   echo ""
+#   echo "    Imagen Cargada $(docker load <  "$CONTENEDORUP")"
+#   echo ""
+#   exit
+#   fi
+   
+if [ "$1" = "dk" ] 
 then
-clear
-echo ""
-echo "-------------------------------"
-echo "Listado de Imágenes disponibles"
-echo "-------------------------------"
-echo ""
-echo -en " Introduce una palabra para filtrar las imagenes del directorio actual: "
-read NOMBRE
-echo " "
-ls -1F $PWD | grep $NOMBRE | nl  2>/dev/null
-ls -1F $PWD > ~/.config/dk/image.dk
-echo  " "  
-echo  " "
-echo     "        Si no desdeas cargar ninguna imágen de las listadas, pulsa Ctrl+c"
-echo " "
-echo " "
-echo -en "    Selecciona el número de la imagen cargar: "
-read CONTENEDOR
-CONTENEDORUP=$(cat ~/.config/dk/image.dk | sed -n ""$CONTENEDOR""p)
-echo ""
-echo "    Imagen Cargada $(docker load <  "$CONTENEDORUP")"
-echo ""
-exit
-fi
+
+
 
 clear
 echo ""
@@ -823,3 +840,6 @@ clear
 echo "Creando el Contenedor "$DOCKER"..."
 echo " "
 /bin/bash $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
+
+exit
+fi
