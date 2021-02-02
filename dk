@@ -66,7 +66,7 @@ then
 echo "
 Modo de empleo: dk [OPCIONES]
 
-dk   dk                  -> Menú para crear un contendor guardado con docker o docker-compose
+dk   dk                  -> Menú para crear y guardar un contendor guardado con docker cli
 dk   vc                  -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
 dk   a                   -> Automontaje de todos los dockers de un grupo (add)
 dk   dc                  -> Montar un docker-compose (docker-compose up -d)
