@@ -12,6 +12,7 @@ sudo curl -L https://raw.githubusercontent.com/uGeek/dk/master/dk \
 
 ## Help
 ```
+
 Modo de empleo: dk [OPCIONES]
 
 dk   cli                 -> Menú para crear un contendor guardado con docker cli
@@ -34,6 +35,7 @@ dk   d, down, stop       -> Lista dockers corriendo, con su número para detener
 dk   r, restart          -> Reiniciando docker  
 dk   d -a, stop -a, ...  -> Detener todos los contenedores 
 dk   e, exec             -> Entrar dentro del contenedor
+dk   eb, execb           -> Entrar dentro del contenedor con bash
 dk   ip                  -> Conoce la ip de un docker
 dk   ls ip, ip -a        -> Listar todas las ip's
 dk   net, red            -> Listar todas las redes
@@ -76,7 +78,6 @@ dk v0.9.9.5 2/2/2021
  Copyright (C) 2020 Angel. uGeek
  ugeekpodcast@gmail.com
 ```
-
 ## Contact
 
 If you want to contact me you can reach me at https://ugeek.github.io.
