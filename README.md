@@ -14,17 +14,21 @@ sudo curl -L https://raw.githubusercontent.com/uGeek/dk/master/dk \
 ```
 Modo de empleo: dk [OPCIONES]
 
-dk                       -> Menú para crear un contendor guardado con docker o docker-compose
-dk   vc                  -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
+dk   cli                 -> Menú para crear un contendor guardado con docker cli
+dk   cliv                -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
 dk   a                   -> Automontaje de todos los dockers de un grupo (add)
 dk   dc                  -> Montar un docker-compose (docker-compose up -d)
-dk   dc d                -> Detener con docker-compose y volumenes (docker-compose down) 
-dk   dc dv               -> Eliminar con docker-compose y volumenes (docker-compose down -v) 
-dk   dc l                -> Docker-Compose logs
-dk   dc rm               -> Eliminar docker-compose detenidos
-dk   n                   -> Guarda un nuevo docker (new)
+dk   dcr                 -> Montar un docker-compose guardado (remote)
+dk   dcd                 -> Detener con docker-compose y volumenes (docker-compose down)
+dk   dcdr                -> Detener con docker-compose guardado (remote)
+dk   dcvl                -> Eliminar con docker-compose y volumenes (docker-compose down -v) 
+dk   dcl                 -> Docker-Compose logs
+dk   dcrm                -> Eliminar docker-compose detenidos
+dk   dcn                 -> Guarda un nuevo docker-compose (new)
+dk   clin                -> Guarda un nuevo docker
 dk   i                   -> Imagenes listadas por creación (image)
-dk   t                   -> Cambiar nombre de imagen
+dk   rc                  -> Camviar nombre contenedor (rename docker)
+dk   ri                  -> Cambiar nombre de imagen (rename image)
 dk   u, up, start        -> Lista dockers con su número para iniciar (up)
 dk   d, down, stop       -> Lista dockers corriendo, con su número para detener (down)
 dk   r, restart          -> Reiniciando docker  
@@ -57,10 +61,20 @@ dk   install             -> Instalalar Docker y docker-compose para derivadas de
 dk  -h, h, --help        -> Ayuda (help)
 
 
-dk v0.9.91 29/11/2020
+  Ejemplos:
+ 
+    dk u                  ->  Iniciar contenedor
+    dk u web              ->  Iniciar contenedor, muestra lista filtrada por web
+
+   Esta opción de filtrado funciona con dentener contenedores, listar imágenes, redes,...                
+
+    dk b                  ->  Construir un Dockerfile
+    dk b ugeek/webdav:arm ->  Construir un Dockerfile con el nombre ugeek/webdav:arm
+
+   
+dk v0.9.9.5 2/2/2021
  Copyright (C) 2020 Angel. uGeek
  ugeekpodcast@gmail.com
-
 ```
 
 ## Contact
