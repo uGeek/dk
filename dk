@@ -2,7 +2,7 @@
 #
 #  dk
 #
-VERSION="v0.9.9.3   2/2/2021"
+VERSION="v0.9.9.4   2/2/2021"
 
 
 
@@ -70,11 +70,14 @@ dk   dk                  -> Menú para crear un contendor guardado con docker o 
 dk   vc                  -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
 dk   a                   -> Automontaje de todos los dockers de un grupo (add)
 dk   dc                  -> Montar un docker-compose (docker-compose up -d)
-dk   dcd                 -> Detener con docker-compose y volumenes (docker-compose down) 
+dk   dcr                 -> Montar un docker-compose guardado (remote)
+dk   dcd                 -> Detener con docker-compose y volumenes (docker-compose down)
+dk   dcr                 -> Detener con docker-compose guardado (remote)
 dk   dcv                 -> Eliminar con docker-compose y volumenes (docker-compose down -v) 
 dk   dcl                 -> Docker-Compose logs
 dk   dcrm                -> Eliminar docker-compose detenidos
-dk   n                   -> Guarda un nuevo docker (new)
+dk   n                   -> Guarda un nuevo docker-compose (new)
+dk   dkn                 -> Guarda un nuevo docker
 dk   i                   -> Imagenes listadas por creación (image)
 dk   t                   -> Cambiar nombre de imagen
 dk   u, up, start        -> Lista dockers con su número para iniciar (up)
@@ -660,41 +663,33 @@ if [ "$1" = "n" ]
 then
 clear
 echo ""
-echo "Vamos a guardar un nuevo docker."
-echo ""
-echo "---------------------------------------"
-echo "Listado de grupo de dockers disponibles"
-echo "---------------------------------------"
-echo ""
-ls -1F $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g | nl
-echo ""
-echo ""
-
-echo -n " ¿A que grupo pertenece?: "  ; read NUMGRUPO
-GRUPO=$(ls -1F  $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g | sed -n ""$NUMGRUPO""p)
+echo   " Vamos a crear un nuevo docker-compose. "
+echo -n " Introduce el nombre: "  ; read GRUPO
+#GRUPO=$(ls -1F  $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g | sed -n ""$NUMGRUPO""p)
 mkdir -p $RUTA_DOCKER_DOTFILE/$GRUPO/
 clear
 echo  " "
-echo -en "Nombre: " ;         read  NOMBRE
-echo -en "Fecha: " ;          read  FECHA
-echo -en "Tags: " ;           read  TAGS
-echo -en "url: " ;            read  URL
-echo -en "Notas: " ;          read  NOTES
-echo -en "Usuario: " ;        read  USUARIO
-echo -en "Contraseña: " ;     read  CONTRASENAS
+echo -en "Versión             : " ; read  VERSION
+echo -en "Nombre de contenedor: " ; read  NOMBRE
+echo -en "Imagen:               " ; read  IMAGEN
+echo -en "puertos:              " ; read  PORTS
+echo -en "volumenes:            " ; read  VOLUMES
+echo -en "Variables :           " ; read  VARIABLES
 
-echo "#                                 " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
-echo "#   Name:         $NOMBRE         " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
-echo "#   Date:         $FECHA          " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
-echo "#   Tags:         $TAGS           " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
-echo "#   url:          $URL            " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
-echo "#                                 " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
-echo "#   Notes:        $NOTES          " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
-echo "#   User:         $USUARIO        " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
-echo "#   Password:     $CONTRASENAS    " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
-echo "#                                 " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
-echo "$RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker"
-$EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "version: '$VERSION'               " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "services:                         " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "  $NOMBRE                         " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "    container_name: $NOMBRE       " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "    image: $IMAGEN                " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "    ports:                        " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "      - $PORTS:$PORTS             " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "    volumes:                      " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "      - $VOLUMES                  " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "    environment:                  " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "      - $VARIABLES                " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+
+echo "$RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml"
+$EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
 clear
 echo "El docker $NOMBRE ha sido guardado con éxito!!!"
 exit
@@ -806,10 +801,8 @@ fi
 #   exit
 #   fi
    
-if [ "$1" = "dk" ] 
+if [ "$1" = "dcr" ] 
 then
-
-
 
 clear
 echo ""
@@ -817,7 +810,7 @@ echo "---------------------------------------"
 echo "Listado de grupo de dockers disponibles"
 echo "---------------------------------------"
 echo ""
-ls -1F $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g | nl 
+ls -1F $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g | nl | grep "$2"
 echo ""
 echo -n "Selecciona el número de grupo de dockers deseado: " ; read NUMGRUPO
 echo " "
@@ -829,17 +822,144 @@ echo "-----------------------------------"
 echo "Listado de contenedores disponibles"
 echo "-----------------------------------"
 echo ""
-ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.docker | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/$GRUPO'/||'g | nl
+#ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.docker | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/$GRUPO'/||'g | nl
+ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.yml | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/$GRUPO'/||'g | nl 
 echo " "
 
 echo -n "  Escribe el número de docker que deseas montar: " ; read NUMDOCKER
-DOCKER=$(ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.docker | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/$GRUPO'/||'g  | sed -n ""$NUMDOCKER""p)
+#DOCKER=$(ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.docker | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/$GRUPO'/||'g  | sed -n ""$NUMDOCKER""p)
+DOCKER=$(ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.yml | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/$GRUPO'/||'g  | sed -n ""$NUMDOCKER""p)
 
-$EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
+#$EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
+$EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.yml
 clear
 echo "Creando el Contenedor "$DOCKER"..."
 echo " "
-/bin/bash $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
-
+#/bin/bash $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
+docker-compose -f $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.yml up  -d
 exit
 fi
+
+
+if [ "$1" = "dcdr" ] 
+then
+
+clear
+echo ""
+echo "---------------------------------------"
+echo "Listado de grupo de dockers disponibles"
+echo "---------------------------------------"
+echo ""
+ls -1F $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g | nl | grep "$2"
+echo ""
+echo -n "Selecciona el número de grupo de dockers deseado: " ; read NUMGRUPO
+echo " "
+GRUPO=$(ls -1F  $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g | sed -n ""$NUMGRUPO""p)
+
+clear
+echo ""
+echo "-----------------------------------"
+echo "Listado de contenedores disponibles"
+echo "-----------------------------------"
+echo ""
+#ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.docker | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/$GRUPO'/||'g | nl
+ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.yml | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/$GRUPO'/||'g | nl 
+echo " "
+
+echo -n "  Escribe el número de docker que deseas montar: " ; read NUMDOCKER
+#DOCKER=$(ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.docker | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/$GRUPO'/||'g  | sed -n ""$NUMDOCKER""p)
+DOCKER=$(ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.yml | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/$GRUPO'/||'g  | sed -n ""$NUMDOCKER""p)
+
+#$EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
+$EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.yml
+clear
+echo "Creando el Contenedor "$DOCKER"..."
+echo " "
+#/bin/bash $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.docker
+docker-compose -f $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.yml down
+exit
+fi
+
+
+if [ "$1" = "dkn" ]
+then
+clear
+echo ""
+echo "Vamos a guardar un nuevo docker."
+echo ""
+echo "---------------------------------------"
+echo "Listado de grupo de dockers disponibles"
+echo "---------------------------------------"
+echo ""
+ls -1F $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g | nl
+echo ""
+echo ""
+
+echo -n " ¿A que grupo pertenece?: "  ; read NUMGRUPO
+GRUPO=$(ls -1F  $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g | sed -n ""$NUMGRUPO""p)
+mkdir -p $RUTA_DOCKER_DOTFILE/$GRUPO/
+clear
+echo  " "
+echo -en "Nombre: " ;         read  NOMBRE
+echo -en "Fecha: " ;          read  FECHA
+echo -en "Tags: " ;           read  TAGS
+echo -en "url: " ;            read  URL
+echo -en "Notas: " ;          read  NOTES
+echo -en "Usuario: " ;        read  USUARIO
+echo -en "Contraseña: " ;     read  CONTRASENAS
+
+echo "#                                 " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#   Name:         $NOMBRE         " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#   Date:         $FECHA          " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#   Tags:         $TAGS           " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#   url:          $URL            " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#                                 " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#   Notes:        $NOTES          " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#   User:         $USUARIO        " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#   Password:     $CONTRASENAS    " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "#                                 " >> $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+echo "$RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker"
+$EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/$NOMBRE.docker
+clear
+echo "El docker $NOMBRE ha sido guardado con éxito!!!"
+exit
+fi
+
+
+if [ "$1" = "dk" ]
+then
+
+mkdir -p $RUTA_DOCKER_DOTFILE/dockers/
+
+    clear
+    echo ""
+    echo "---------------------------------------"
+    echo "Listado de grupo de dockers disponibles"
+    echo "---------------------------------------"
+    echo ""
+    ls -1F $RUTA_DOCKER_DOTFILE/dockers/ | grep '/$' | sed s'|/||'g | nl
+    echo ""
+    echo -n "Selecciona el número de grupo de dockers deseado: " ; read NUMGRUPO
+    echo " "
+    GRUPO=$(ls -1F  $RUTA_DOCKER_DOTFILE/dockers/ | grep '/$' | sed s'|/||'g | sed -n ""$NUMGRUPO""p)
+
+    clear
+    echo ""
+    echo "-----------------------------------"
+    echo "Listado de contenedores disponibles"
+    echo "-----------------------------------"
+    echo ""
+    ls -1 $RUTA_DOCKER_DOTFILE/dockers/$GRUPO/*.docker | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/dockers/$GRUPO'/||'g | nl
+    echo " "
+
+    echo -n "  Escribe el número de docker que deseas montar: " ; read NUMDOCKER
+    DOCKER=$(ls -1 $RUTA_DOCKER_DOTFILE/dockers/$GRUPO/*.docker | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/dockers/$GRUPO'/||'g  | sed -n ""$NUMDOCKER""p)
+
+    $EDITOR $RUTA_DOCKER_DOTFILE/dockers/$GRUPO/$DOCKER.docker
+    clear
+    echo "Creando el Contenedor "$DOCKER"..."
+    echo " "
+    /bin/bash $RUTA_DOCKER_DOTFILE/dockers/$GRUPO/$DOCKER.docker
+
+    exit
+    fi
