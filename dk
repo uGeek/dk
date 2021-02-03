@@ -76,6 +76,7 @@ dk   dcdr                -> Detener con docker-compose guardado (remote)
 dk   dcvl                -> Eliminar con docker-compose y volumenes (docker-compose down -v) 
 dk   dcl                 -> Docker-Compose logs
 dk   dcrm                -> Eliminar docker-compose detenidos
+dk   dcrrm               -> Eliminar plantilla en directorio dk, docker-compose     
 dk   dcn                 -> Guarda un nuevo docker-compose (new)
 dk   clin                -> Guarda un nuevo docker
 dk   i                   -> Imagenes listadas por creación (image)
@@ -127,7 +128,7 @@ dk  -h, h, --help        -> Ayuda (help)
    
 dk "$VERSION"
  Copyright (C) 2020 Angel. uGeek
- ugeekpodcast@gmail.com"
+ ugeekpodcast@gmail.com" | grep "$2"
 exit
 fi
 
@@ -718,17 +719,17 @@ echo -en "puertos:              " ; read  PORTS
 echo -en "volumenes:            " ; read  VOLUMES
 echo -en "Variables :           " ; read  VARIABLES
 
-echo "version: '$VERSION'               " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
-echo "services:                         " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
-echo "  $NOMBRE                         " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
-echo "    container_name: $NOMBRE       " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
-echo "    image: $IMAGEN                " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
-echo "    ports:                        " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
-echo "      - $PORTS:$PORTS             " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
-echo "    volumes:                      " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
-echo "      - $VOLUMES                  " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
-echo "    environment:                  " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
-echo "      - $VARIABLES                " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "version: '$VERSION'                " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "services:                          " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "  $NOMBRE:                         " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "    container_name: $NOMBRE        " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "    image: $IMAGEN                 " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "    ports:                         " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "      - '$PORTS:$PORTS'            " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "    volumes:                       " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "      - '$VOLUMES'                 " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "    environment:                   " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
+echo "      - '$VARIABLES'               " >> $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
 
 echo "$RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml"
 $EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/docker-compose.yml
@@ -889,6 +890,42 @@ DOCKER=$(ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.yml | cut -d "." -f1 | sed s'|'$RUT
 clear
 
 cat $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.yml
+
+
+echo -n "¿Quieres editarlo?: [si/no] " ; read RESPUESTA
+if [ "$RESPUESTA" = "SI" ] || [ "$RESPUESTA" = "S" ] || [ "$RESPUESTA" = "si" ] || [ "$RESPUESTA" = "s" ]
+then
+$EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.yml
+clear
+fi
+
+exit
+fi
+
+
+if [ "$1" = "dcrrm" ] 
+then
+clear
+echo ""
+echo "---------------------------------------"
+echo "Listado de docker-compose disponibles"
+echo "---------------------------------------"
+echo ""
+ls -1F $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g | nl | grep "$2"
+echo ""
+echo -n "Selecciona del docker-compose deseado: " ; read NUMGRUPO
+echo " "
+GRUPO=$(ls -1F  $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g | sed -n ""$NUMGRUPO""p)
+
+clear
+
+echo -n "¿Estas seguro que quieres borrar este docker compose?: [si/no] " ; read RESPUESTA
+if [ "$RESPUESTA" = "SI" ] || [ "$RESPUESTA" = "S" ] || [ "$RESPUESTA" = "si" ] || [ "$RESPUESTA" = "s" ]
+then
+rm -Rf $RUTA_DOCKER_DOTFILE/$GRUPO/
+clear
+fi
+
 exit
 fi
 
