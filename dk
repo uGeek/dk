@@ -901,6 +901,14 @@ $EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.yml
 clear
 fi
 
+
+echo -n "¿Quieres Levantar el docker-compose?: [si/no] " ; read RESPUESTA
+if [ "$RESPUESTA" = "SI" ] || [ "$RESPUESTA" = "S" ] || [ "$RESPUESTA" = "si" ] || [ "$RESPUESTA" = "s" ]
+then
+clear    
+docker-compose -f $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.yml up  -d
+fi
+
 exit
 fi
 
@@ -951,8 +959,16 @@ fi
 echo -n "¿Quieres editarlo?: [si/no] " ; read RESPUESTA
 if [ "$RESPUESTA" = "SI" ] || [ "$RESPUESTA" = "S" ] || [ "$RESPUESTA" = "si" ] || [ "$RESPUESTA" = "s" ]
 then
-$EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.yml
+$EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/$NUEVODOCKER.yml
 clear
+fi
+
+
+echo -n "¿Quieres Levantar el docker-compose?: [si/no] " ; read RESPUESTA
+if [ "$RESPUESTA" = "SI" ] || [ "$RESPUESTA" = "S" ] || [ "$RESPUESTA" = "si" ] || [ "$RESPUESTA" = "s" ]
+then
+clear    
+docker-compose -f $RUTA_DOCKER_DOTFILE/$GRUPO/$NUEVODOCKER.yml up  -d
 fi
 
 
