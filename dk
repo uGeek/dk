@@ -2,7 +2,7 @@
 #
 #  dk
 #
-VERSION="v0.9.9.5   2/2/2021"
+VERSION="v0.9.9.6   2/2/2021"
 
 
 
@@ -74,6 +74,8 @@ dk   dcr                 -> Montar un docker-compose guardado (remote)
 dk   dcd                 -> Detener con docker-compose y volumenes (docker-compose down)
 dk   dcdr                -> Detener con docker-compose guardado (remote)
 dk   dcvl                -> Eliminar con docker-compose y volumenes (docker-compose down -v) 
+dk   dcv                 -> Ver un docker-compose y editarlo
+dk   dccp                -> Copiar un docker-compose existente, por otro de otro nombre
 dk   dcl                 -> Docker-Compose logs
 dk   dcrm                -> Eliminar docker-compose detenidos
 dk   dcrrm               -> Eliminar plantilla en directorio dk, docker-compose     
@@ -901,6 +903,63 @@ fi
 
 exit
 fi
+
+
+
+if [ "$1" = "dccp" ] 
+then
+clear
+echo ""
+echo "---------------------------------------"
+echo "Listado de docker-compose disponibles"
+echo "---------------------------------------"
+echo ""
+ls -1F $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g | nl | grep "$2"
+echo ""
+echo -n "Selecciona del docker-compose deseado: " ; read NUMGRUPO
+echo " "
+GRUPO=$(ls -1F  $RUTA_DOCKER_DOTFILE/ | grep '/$' | sed s'|/||'g | sed -n ""$NUMGRUPO""p)
+
+clear
+echo ""
+echo "----------------------------------------------------------"
+echo "Listado de archivos docker-compose disponibles para copiar"
+echo "----------------------------------------------------------"
+echo ""
+
+ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.yml | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/$GRUPO'/||'g | nl 
+echo " "
+
+echo    "  Escribe el número que deseas ver " 
+echo -n "  Por defecto es 'docker-compose' " ; read NUMDOCKER
+DOCKER=$(ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.yml | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/$GRUPO'/||'g  | sed -n ""$NUMDOCKER""p)
+
+clear
+
+cat $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.yml
+
+
+echo -n "¿Quieres copiarlo?: [si/no] " ; read RESPUESTA
+if [ "$RESPUESTA" = "SI" ] || [ "$RESPUESTA" = "S" ] || [ "$RESPUESTA" = "si" ] || [ "$RESPUESTA" = "s" ]
+then
+
+echo -n "  Que nombre quieres dar al nuevo 'docker-compose'" ; read NUEVODOCKER
+cp $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.yml   $RUTA_DOCKER_DOTFILE/$GRUPO/$NUEVODOCKER.yml
+clear
+fi
+
+echo -n "¿Quieres editarlo?: [si/no] " ; read RESPUESTA
+if [ "$RESPUESTA" = "SI" ] || [ "$RESPUESTA" = "S" ] || [ "$RESPUESTA" = "si" ] || [ "$RESPUESTA" = "s" ]
+then
+$EDITOR $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.yml
+clear
+fi
+
+
+
+exit
+fi
+
 
 
 if [ "$1" = "dcrrm" ] 
