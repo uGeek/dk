@@ -92,6 +92,7 @@ dk   e, exec             -> Entrar dentro del contenedor
 dk   eb, execb           -> Entrar dentro del contenedor con bash
 dk   ip                  -> Conoce la ip de un docker
 dk   ls ip, ip -a        -> Listar todas las ip's
+dk   list ip             -> Listar todas las ip's de un modo distinto
 dk   net, red            -> Listar todas las redes
 dk   ls, ps              -> Dockers que están corriendo y sus puertos (list)
 dk   ls -a, ps -a        -> Todos los Dockers disponibles (list all)
@@ -409,6 +410,15 @@ docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}}
 exit
 fi
 
+if [ "$1" = "list" ] && [ "$2" = "ip" ]
+then
+clear
+echo "----------------"
+echo "CONTAINERS IP's"    
+echo "----------------"  
+docker ps -q | xargs -n 1 docker inspect --format '{{range .NetworkSettings.Networks}} - {{.IPAddress}}{{end}} {{ .Name }}' 
+exit
+fi
 
 if [ "$1" = "ls" ] && [ "$2" = "-a" ] || [ "$1" = "ps" ] && [ "$2" = "-a" ] 
 then    
