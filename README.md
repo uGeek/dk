@@ -60,6 +60,7 @@ dk   install debian      -> Instalalar Docker y docker-compose en Debian
 dk   install armhf       -> Instalalar Docker y docker-compose en armhf (Raspberry)
 dk   install arm64       -> Instalalar Docker y docker-compose en arm64
 dk   install             -> Instalalar Docker y docker-compose para derivadas de Debian desde los repositorios
+dk   not  [server]       -> Notificaciones de conenedores detenidos o levantados
 dk  -h, h, --help        -> Ayuda (help)
 
 
@@ -78,6 +79,16 @@ dk v0.9.9.5 2/2/2021
  Copyright (C) 2020 Angel. uGeek
  ugeekpodcast@gmail.com
 ```
+
+## Comando en cron para notificaciones
+Monitorización cada 2 minutos de los dockers en mi raspberry **rp4** y vps **vps**.
+
+```
+*/2 * * * * NOT=$(echo $(dk not rp4)) ; if [ "" != "$NOT" ]; then echo "$NOT" | matrix - ; fi
+*/2 * * * * NOTREMOTO=$(echo "$(ssh -t  vps "dk not vps")") ; if [ "" != "$NOTREMOTO" ]; then echo "$NOTREMOTO" | matrix - ; fi
+```
+
+
 ## Contact
 
 If you want to contact me you can reach me at https://ugeek.github.io.
