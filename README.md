@@ -81,7 +81,9 @@ dk v0.9.9.5 2/2/2021
 ```
 
 ## Comando en cron para notificaciones
-Monitorización cada 2 minutos de los dockers en mi raspberry **rp4** y vps **vps**.
+Monitorización cada 2 minutos de los dockers en mi raspberry **rp4** y vps **vps**, **desde mi raspberry**.
+
+En este ejemplo, estoy utilizando las notificaciones con el script para notificar en matrix. `| matrix -`
 
 ```
 */2 * * * * NOT=$(echo $(dk not rp4)) ; if [ "" != "$NOT" ]; then echo "$NOT" | matrix - ; fi
