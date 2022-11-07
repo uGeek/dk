@@ -115,6 +115,7 @@ dk   install debian      -> Instalalar Docker y docker-compose en Debian
 dk   install armhf       -> Instalalar Docker y docker-compose en armhf (Raspberry)
 dk   install arm64       -> Instalalar Docker y docker-compose en arm64
 dk   install             -> Instalalar Docker y docker-compose para derivadas de Debian desde los repositorios
+dk   not  [server]       -> Enviar notificaciones de contenedores que se levanten o detengan
 dk  -h, h, --help        -> Ayuda (help)
 
 
