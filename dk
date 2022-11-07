@@ -2,7 +2,7 @@
 #
 #  dk
 #
-VERSION="v0.9.9.6   2/2/2021"
+VERSION="v0.9.9.7   07/11/2022"
 
 
 
@@ -1048,6 +1048,35 @@ echo -n "  Por defecto es 'docker-compose'                  " ; read NUMDOCKER
 DOCKER=$(ls -1 $RUTA_DOCKER_DOTFILE/$GRUPO/*.yml | cut -d "." -f1 | sed s'|'$RUTA_DOCKER_DOTFILE/$GRUPO'/||'g  | sed -n ""$NUMDOCKER""p)
 
 docker-compose -f $RUTA_DOCKER_DOTFILE/$GRUPO/$DOCKER.yml down
+exit
+fi
+
+if [ "$1" = "not" ]
+then
+
+if [ ! -f  ~/.config/dk/$2.not ]; then
+				touch ~/.config/dk/$2.not
+		fi
+
+
+CONTENEDORES_RUN=$(docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d'  2>/dev/null)
+ESTADO=$(diff ~/.config/dk/$2.not <(echo "$CONTENEDORES_RUN"))
+
+if [ "$(echo "$ESTADO" | grep ">")" != "" ] ; then
+		echo "$2 Contenedor levantado"
+		echo "-----------------------"
+		echo "$ESTADO" | grep ">" | sed s'|>||'g
+echo "$CONTENEDORES_RUN" > ~/.config/dk/$2.not
+
+fi
+
+if [ "$(echo "$ESTADO" | grep "<")" != "" ] ; then
+		echo "$2 Contenedor detenido"
+		echo "----------------------"
+		echo "$ESTADO" | grep "<" | sed s'|<||'g
+echo "$CONTENEDORES_RUN" > ~/.config/dk/$2.not
+
+fi
 exit
 fi
 
