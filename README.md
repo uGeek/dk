@@ -90,6 +90,14 @@ En este ejemplo, estoy utilizando las notificaciones con el script para notifica
 */2 * * * * NOTREMOTO=$(echo "$(ssh -t  vps "dk not vps")") ; if [ "" != "$NOTREMOTO" ]; then echo "$NOTREMOTO" | matrix - ; fi
 ```
 
+## Forzar la última actualización
+
+Borra el archivo **last.log** y ejecuta cualquier comando **dk**.
+
+```
+rm ~/.config/dk/last.log 
+```
+
 
 ## Contact
 
