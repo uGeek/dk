@@ -2,7 +2,7 @@
 #
 #  dk
 #
-VERSION="v0.9.9.7   07/11/2022"
+VERSION="v0.9.9.8   21/12/2022"
 
 
 
@@ -107,6 +107,7 @@ dk   load                -> Cargar Imagen del directorio actual
 dk   sload               -> Buscar imagen del directorio actual, filtrando por palabra
 dk   l, log              -> Lista contendores con su número, para ver los logs
 dk   s, stats            -> Ver consumo de cpu, memoria,... de todos los contenedores
+dk   sp, statsp          -> Ver consumo de cpu, memoria (porcentaje),... de todos los contenedores
 dk   s c, stats c        -> Lista contenedores con su número para ver el consumo de cpu, memoria,...
 dk   ss, stats sort      -> Ordena contenedores por cpu, memoria, ...
 dk   p, prune            -> Borrar todos los Contenedores, imágenes, redes, que esten detenidos
@@ -703,9 +704,15 @@ docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemPerc}}\t{{.NetIO}}" 
 exit
 fi
 
-if [ "$1" = "stats" ] || [ "$1" = "s" ] 
+if [ "$1" = "statsp" ] || [ "$1" = "sp" ] 
 then
 docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemPerc}}\t{{.NetIO}}"
+exit
+fi
+
+if [ "$1" = "stats" ] || [ "$1" = "s" ] 
+then
+docker stats --all --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t\t{{.NetIO}}"
 exit
 fi
 
