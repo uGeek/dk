@@ -117,6 +117,7 @@ dk   install armhf       -> Instalalar Docker y docker-compose en armhf (Raspber
 dk   install arm64       -> Instalalar Docker y docker-compose en arm64
 dk   install             -> Instalalar Docker y docker-compose para derivadas de Debian desde los repositorios
 dk   not  [server]       -> Enviar notificaciones de contenedores que se levanten o detengan
+dk   prompt              -> Utilizar comandos en bucle con un prompt
 dk  -h, h, --help        -> Ayuda (help)
 
 
@@ -1171,3 +1172,27 @@ mkdir -p $RUTA_DOCKER_DOTFILE/dockers/
 
     exit
     fi
+    
+    
+if [ "$1" = "prompt" ]
+then
+        while true; do
+            echo ""
+            echo "< dk >"
+        echo    "---------------------------------------------"
+        echo -n ">> prompt: " ; read COMANDO
+        echo    "---------------------------------------------"
+        if [ "$COMANDO" = "q" ] ; then
+                echo "Saliendo de dk..."
+                exit
+                fi
+        if [ "$COMANDO" = "clear" ] ; then
+                echo ""
+                clear
+            else
+            dk $COMANDO
+                fi
+
+done
+fi
+
