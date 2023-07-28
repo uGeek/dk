@@ -2,7 +2,7 @@
 #
 #  dk
 #
-VERSION="v0.9.9.9   19/05/2023"
+VERSION="v1.0   29/07/2023"
 
 
 
@@ -197,23 +197,12 @@ else
     docker_status=$(docker inspect -f '{{.State.Status}}' "$docker_name")
 
     if [[ $docker_status == "running" ]]; then
-        echo "¿Quieres parar el contenedor? (y/n): "
-        read -r answer
-        if [[ $answer == "y" ]]; then
-            docker stop "$docker_name"
-        else
-            echo "El contenedor no se ha parado."
-        fi
+        docker stop "$docker_name"
     else
-        echo "¿Quieres iniciar el contenedor? (y/n): "
-        read -r answer
-        if [[ $answer == "y" ]]; then
-            docker start "$docker_name"
-        else
-            echo "El contenedor no se ha iniciado."
-        fi
+        docker start "$docker_name"
     fi
 fi
+
 exit
 fi
 
