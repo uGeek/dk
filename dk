@@ -66,6 +66,7 @@ then
 echo "
 Modo de empleo: dk [OPCIONES]
 
+dk   m                   -> Cambiar estado de dockers mediante menú
 dk   cli                 -> Menú para crear un contendor guardado con docker cli
 dk   cliv                -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
 dk   a                   -> Automontaje de todos los dockers de un grupo (add)
@@ -152,6 +153,69 @@ fi
 exit
 fi
 
+
+if [ "$1" = "m" ] ; then
+clear
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+i=0
+declare -A array
+
+echo ""
+echo "Dockers en ejecución:"
+
+while IFS= read -r running_dockers; do
+    echo -e "${GREEN}${running_dockers}${NC} (${i})"
+    array[$i]=$running_dockers
+    i=$((i + 1))
+done < <(docker ps --format "{{.Names}}")
+
+echo ""
+echo "Dockers detenidos:"
+
+while IFS= read -r stopped_dockers; do
+    echo -e "${RED}${stopped_dockers}${NC} (${i})"
+    array[$i]=$stopped_dockers
+    i=$((i + 1))
+done < <(docker ps -a --filter status=exited --format "{{.Names}}")
+
+echo ""
+echo "¿Qué docker quieres cambiar de estado? (Introduce el número): "
+read -r docker_number
+
+if [[ -z $docker_number ]]; then
+    echo "No has introducido un número."
+elif ! [[ $docker_number =~ ^[0-9]+$ ]]; then
+    echo "El valor introducido no es un número válido."
+elif (( docker_number < 0 || docker_number >= i )); then
+    echo "El número que has introducido está fuera del rango válido."
+else
+    docker_name="${array[$docker_number]}"
+    docker_status=$(docker inspect -f '{{.State.Status}}' "$docker_name")
+
+    if [[ $docker_status == "running" ]]; then
+        echo "¿Quieres parar el contenedor? (y/n): "
+        read -r answer
+        if [[ $answer == "y" ]]; then
+            docker stop "$docker_name"
+        else
+            echo "El contenedor no se ha parado."
+        fi
+    else
+        echo "¿Quieres iniciar el contenedor? (y/n): "
+        read -r answer
+        if [[ $answer == "y" ]]; then
+            docker start "$docker_name"
+        else
+            echo "El contenedor no se ha iniciado."
+        fi
+    fi
+fi
+exit
+fi
 
 if [ "$1" = "a" ]
 then
