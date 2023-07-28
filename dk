@@ -67,6 +67,7 @@ echo "
 Modo de empleo: dk [OPCIONES]
 
 dk   m                   -> Cambiar estado de dockers mediante menú
+dk   mf                  -> Cambiar estado de dockers mediante menú. Solo dockers que se indiquen. Ejemplo: dk mf caddy jellyfin
 dk   cli                 -> Menú para crear un contendor guardado con docker cli
 dk   cliv                -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
 dk   a                   -> Automontaje de todos los dockers de un grupo (add)
@@ -208,6 +209,67 @@ else
         docker start "$docker_name"
     fi
 fi
+exit
+fi
+
+if [ "$1" = "mf" ] ; then
+clear
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+i=0
+declare -A array
+
+echo ""
+echo ""
+echo "Dockers en ejecución:"
+running_containers=$(docker ps --format "{{.Names}}" | sort)
+
+i=0
+declare -A array
+
+for running_dockers in $running_containers; do
+    if [[ " ${@} " =~ " ${running_dockers} " ]]; then
+        echo -e "${GREEN}${running_dockers}${NC} (${i})"
+        array[$i]=$running_dockers
+        i=$((i + 1))
+    fi
+done
+
+echo ""
+echo "Dockers detenidos:"
+stopped_containers=$(docker ps -a --filter status=exited --format "{{.Names}}" | sort)
+
+for stopped_dockers in $stopped_containers; do
+    if [[ " ${@} " =~ " ${stopped_dockers} " ]]; then
+        echo -e "${RED}${stopped_dockers}${NC} (${i})"
+        array[$i]=$stopped_dockers
+        i=$((i + 1))
+    fi
+done
+echo ""
+
+echo "¿Qué docker quieres cambiar de estado? (Introduce el número): "
+read -r docker_number
+
+if [[ -z $docker_number ]]; then
+    echo "No has introducido un número."
+elif ! [[ $docker_number =~ ^[0-9]+$ ]]; then
+    echo "El valor introducido no es un número válido."
+elif (( docker_number < 0 || docker_number >= i )); then
+    echo "El número que has introducido está fuera del rango válido."
+else
+    docker_name="${array[$docker_number]}"
+    docker_status=$(docker inspect -f '{{.State.Status}}' "$docker_name")
+
+    if [[ $docker_status == "running" ]]; then
+        docker stop "$docker_name"
+    else
+        docker start "$docker_name"
+    fi
+fi
+
 exit
 fi
 
