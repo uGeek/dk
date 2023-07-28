@@ -166,23 +166,29 @@ declare -A array
 
 echo ""
 echo "Dockers en ejecución:"
+running_containers=$(docker ps --format "{{.Names}}" | sort)
 
-while IFS= read -r running_dockers; do
+i=0
+declare -A array
+
+for running_dockers in $running_containers; do
     echo -e "${GREEN}${running_dockers}${NC} (${i})"
     array[$i]=$running_dockers
     i=$((i + 1))
-done < <(docker ps --format "{{.Names}}")
+done
 
 echo ""
 echo "Dockers detenidos:"
+stopped_containers=$(docker ps -a --filter status=exited --format "{{.Names}}" | sort)
 
-while IFS= read -r stopped_dockers; do
+for stopped_dockers in $stopped_containers; do
     echo -e "${RED}${stopped_dockers}${NC} (${i})"
     array[$i]=$stopped_dockers
     i=$((i + 1))
-done < <(docker ps -a --filter status=exited --format "{{.Names}}")
+done
 
 echo ""
+
 echo "¿Qué docker quieres cambiar de estado? (Introduce el número): "
 read -r docker_number
 
@@ -202,7 +208,6 @@ else
         docker start "$docker_name"
     fi
 fi
-
 exit
 fi
 
