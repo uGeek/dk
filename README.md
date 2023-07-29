@@ -98,6 +98,10 @@ Borra el archivo **last.log** y ejecuta cualquier comando **dk**.
 rm ~/.config/dk/last.log 
 ```
 
+## Menú para detener o iniciar dockers
+
+![mf](mf.png)
+
 
 ## Contact
 
