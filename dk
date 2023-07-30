@@ -2,7 +2,7 @@
 #
 #  dk
 #
-VERSION="v1.0   29/07/2023"
+VERSION="v1.1   31/07/2023"
 
 
 
@@ -66,7 +66,7 @@ then
 echo "
 Modo de empleo: dk [OPCIONES]
 
-dk   m                   -> Cambiar estado de dockers mediante menú
+dk   m                   -> Cambiar estado de dockers mediante menú (si añades r o p despues del número de docker, reinicia o muestra puertos)
 dk   mf                  -> Cambiar estado de dockers mediante menú. Solo dockers que se indiquen. Ejemplo: dk mf caddy jellyfin
 dk   cli                 -> Menú para crear un contendor guardado con docker cli
 dk   cliv                -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
@@ -190,12 +190,18 @@ done
 
 echo ""
 
-echo "¿Qué docker quieres cambiar de estado? (Introduce el número): "
-read -r docker_number
+echo "¿Qué docker quieres cambiar de estado, reiniciar o mostrar sus puertos? (Introduce el número seguido de 'r' para reiniciar o 'p' para mostrar los puertos): "
+read -r docker_input
+
+docker_number="${docker_input%?}"
+option="${docker_input: -1}"
 
 if [[ -z $docker_number ]]; then
-    echo "No has introducido un número."
-elif ! [[ $docker_number =~ ^[0-9]+$ ]]; then
+    docker_number=$docker_input
+    option=""
+fi
+
+if ! [[ $docker_number =~ ^[0-9]+$ ]]; then
     echo "El valor introducido no es un número válido."
 elif (( docker_number < 0 || docker_number >= i )); then
     echo "El número que has introducido está fuera del rango válido."
@@ -203,12 +209,22 @@ else
     docker_name="${array[$docker_number]}"
     docker_status=$(docker inspect -f '{{.State.Status}}' "$docker_name")
 
-    if [[ $docker_status == "running" ]]; then
-        docker stop "$docker_name"
+    if [[ $option == "r" ]]; then
+        docker restart "$docker_name"
+    elif [[ $option == "p" ]]; then
+        docker_port=$(docker port "$docker_name")
+        echo ""
+        echo "Puertos del docker $docker_name:"
+        echo "$docker_port"
     else
-        docker start "$docker_name"
+        if [[ $docker_status == "running" ]]; then
+            docker stop "$docker_name"
+        else
+            docker start "$docker_name"
+        fi
     fi
 fi
+
 exit
 fi
 
@@ -250,12 +266,18 @@ for stopped_dockers in $stopped_containers; do
 done
 echo ""
 
-echo "¿Qué docker quieres cambiar de estado? (Introduce el número): "
-read -r docker_number
+echo "¿Qué docker quieres cambiar de estado, reiniciar o mostrar sus puertos? (Introduce el número seguido de 'r' para reiniciar o 'p' para mostrar los puertos): "
+read -r docker_input
+
+docker_number="${docker_input%?}"
+option="${docker_input: -1}"
 
 if [[ -z $docker_number ]]; then
-    echo "No has introducido un número."
-elif ! [[ $docker_number =~ ^[0-9]+$ ]]; then
+    docker_number=$docker_input
+    option=""
+fi
+
+if ! [[ $docker_number =~ ^[0-9]+$ ]]; then
     echo "El valor introducido no es un número válido."
 elif (( docker_number < 0 || docker_number >= i )); then
     echo "El número que has introducido está fuera del rango válido."
@@ -263,14 +285,21 @@ else
     docker_name="${array[$docker_number]}"
     docker_status=$(docker inspect -f '{{.State.Status}}' "$docker_name")
 
-    if [[ $docker_status == "running" ]]; then
-        docker stop "$docker_name"
+    if [[ $option == "r" ]]; then
+        docker restart "$docker_name"
+    elif [[ $option == "p" ]]; then
+        docker_port=$(docker port "$docker_name")
+        echo ""
+        echo "Puertos del docker $docker_name:"
+        echo "$docker_port"
     else
-        docker start "$docker_name"
+        if [[ $docker_status == "running" ]]; then
+            docker stop "$docker_name"
+        else
+            docker start "$docker_name"
+        fi
     fi
 fi
-
-
 
 exit
 fi
