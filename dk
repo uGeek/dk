@@ -2,7 +2,7 @@
 #
 #  dk
 #
-VERSION="v1.1.1   31/07/2023"
+VERSION="v1.1.2   31/07/2023"
 
 
 
@@ -238,6 +238,7 @@ else
     docker_status=$(docker inspect -f '{{.State.Status}}' "$docker_name")
 
     if [[ $option == "r" ]]; then
+        echo "Reiniciando el docker $docker_name"
         docker restart "$docker_name"
     elif [[ $option == "p" ]]; then
         docker_port=$(docker port "$docker_name")
@@ -246,8 +247,10 @@ else
         echo "$docker_port"
     else
         if [[ $docker_status == "running" ]]; then
+            echo "Deteniendo el docker $docker_name"
             docker stop "$docker_name"
         else
+            echo "Iniciando el docker $docker_name"
             docker start "$docker_name"
         fi
     fi
@@ -314,6 +317,7 @@ else
     docker_status=$(docker inspect -f '{{.State.Status}}' "$docker_name")
 
     if [[ $option == "r" ]]; then
+        echo "Reiniciando el docker $docker_name"
         docker restart "$docker_name"
     elif [[ $option == "p" ]]; then
         docker_port=$(docker port "$docker_name")
@@ -322,13 +326,14 @@ else
         echo "$docker_port"
     else
         if [[ $docker_status == "running" ]]; then
+            echo "Deteniendo el docker $docker_name"
             docker stop "$docker_name"
         else
+            echo "Iniciando el docker $docker_name"
             docker start "$docker_name"
         fi
     fi
 fi
-
 exit
 fi
 
