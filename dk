@@ -2,7 +2,7 @@
 #
 #  dk
 #
-VERSION="v1.1   31/07/2023"
+VERSION="v1.1.1   31/07/2023"
 
 
 
@@ -67,7 +67,9 @@ echo "
 Modo de empleo: dk [OPCIONES]
 
 dk   m                   -> Cambiar estado de dockers mediante menú (si añades r o p despues del número de docker, reinicia o muestra puertos)
+dk   mp                  -> Comando m, pero con prompt en modo bucle infinito
 dk   mf                  -> Cambiar estado de dockers mediante menú. Solo dockers que se indiquen. Ejemplo: dk mf caddy jellyfin
+dk   mfp                 -> Comando mf, pero con prompt en modo bucle infinito
 dk   cli                 -> Menú para crear un contendor guardado con docker cli
 dk   cliv                -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
 dk   a                   -> Automontaje de todos los dockers de un grupo (add)
@@ -152,6 +154,32 @@ else
 svn export https://github.com/uGeek/dk/trunk/store $RUTA_DOCKER_DOTFILE/store --force
 fi    
 exit
+fi
+
+if [ "$1" = "mp" ] ; then
+   RED='\033[0;31m'
+   NC='\033[0m'
+
+    while true; do
+    dk m
+    echo ""
+    echo -e "${RED}pulsa Ctrl+c para salir${NC}"
+    sleep 3
+    done
+    exit
+fi
+
+if [ "$1" = "mfp" ] ; then
+   RED='\033[0;31m'
+   NC='\033[0m'
+
+    while true; do
+    dk mf
+    echo ""
+    echo -e "${RED}pulsa Ctrl+c para salir${NC}"
+    sleep 3
+    done
+    exit
 fi
 
 
