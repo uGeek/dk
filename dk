@@ -2,7 +2,7 @@
 #
 #  dk
 #
-VERSION="v1.1.2   31/07/2023"
+VERSION="v1.1.3   31/07/2023"
 
 
 
@@ -185,20 +185,16 @@ fi
 
 if [ "$1" = "m" ] ; then
 clear
-
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
 
-i=0
+i=1
 declare -A array
 
 echo ""
 echo "Dockers en ejecución:"
 running_containers=$(docker ps --format "{{.Names}}" | sort)
-
-i=0
-declare -A array
 
 for running_dockers in $running_containers; do
     echo -e "${GREEN}${running_dockers}${NC} (${i})"
@@ -217,11 +213,10 @@ for stopped_dockers in $stopped_containers; do
 done
 
 echo ""
-
 echo "¿Qué docker quieres cambiar de estado, reiniciar o mostrar sus puertos? (Introduce el número seguido de 'r' para reiniciar o 'p' para mostrar los puertos): "
 read -r docker_input
 
-docker_number="${docker_input%?}"
+docker_number="${docker_input%[rp]}"
 option="${docker_input: -1}"
 
 if [[ -z $docker_number ]]; then
@@ -231,7 +226,7 @@ fi
 
 if ! [[ $docker_number =~ ^[0-9]+$ ]]; then
     echo "El valor introducido no es un número válido."
-elif (( docker_number < 0 || docker_number >= i )); then
+elif (( docker_number < 1 || docker_number >= i )); then
     echo "El número que has introducido está fuera del rango válido."
 else
     docker_name="${array[$docker_number]}"
@@ -255,7 +250,6 @@ else
         fi
     fi
 fi
-
 exit
 fi
 
@@ -300,7 +294,7 @@ echo ""
 echo "¿Qué docker quieres cambiar de estado, reiniciar o mostrar sus puertos? (Introduce el número seguido de 'r' para reiniciar o 'p' para mostrar los puertos): "
 read -r docker_input
 
-docker_number="${docker_input%?}"
+docker_number="${docker_input%[rp]}"
 option="${docker_input: -1}"
 
 if [[ -z $docker_number ]]; then
@@ -310,7 +304,7 @@ fi
 
 if ! [[ $docker_number =~ ^[0-9]+$ ]]; then
     echo "El valor introducido no es un número válido."
-elif (( docker_number < 0 || docker_number >= i )); then
+elif (( docker_number < 1 || docker_number >= i )); then
     echo "El número que has introducido está fuera del rango válido."
 else
     docker_name="${array[$docker_number]}"
