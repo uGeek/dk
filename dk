@@ -45,6 +45,8 @@ if [ ! -f ~/.config/dk/dk.conf ]; then
 		    read RUTA ; echo "RUTA_DOCKER_DOTFILE='"$RUTA"'" > ~/.config/dk/dk.conf
 		    echo -en "\n ¿Que editor de texto quieres utilizar? \n\n\t Ejemplo: vim: "
 		    read EDITOR ; echo "EDITOR='"$EDITOR"'" >> ~/.config/dk/dk.conf
+                    echo -en "\n ¿Que IP tiene tu servidor?"
+		    read IP ; echo "IP='"$IP"'" >> ~/.config/dk/dk.conf
 		    mkdir -p $RUTA
 		    break;;
             [Nn]* ) exit;;
