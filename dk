@@ -2,7 +2,7 @@
 #
 #  dk
 #
-VERSION="v1.1.4   31/07/2023"
+VERSION="v1.1.5   1/08/2023"
 
 
 
@@ -99,6 +99,7 @@ dk   ls ip, ip -a        -> Listar todas las ip's
 dk   list ip             -> Listar todas las ip's de un modo distinto
 dk   net, red            -> Listar todas las redes
 dk   ls, ps              -> Dockers que están corriendo y sus puertos (list)
+dk   lsp, psp            -> Dockers que están corriendo y sus puertos mostrando IP del servidor, añadido en la variable IP= del dk.conf
 dk   ls -a, ps -a        -> Todos los Dockers disponibles (list all)
 dk   st, store           -> Descarga Dockers de la store de dk
 dk   rm                  -> Lista contenedores con su número para ser borrado (remove)
@@ -616,6 +617,17 @@ echo "----------------------------------"
 docker ps --format 'table {{.Names}}\t{{.Ports}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl | grep "$2" 2>/dev/null
 echo ""
 exit
+fi
+
+if [ "$1" = "lsp" ] || [ "$1" = "psp" ]
+then
+    clear
+    PORTS=$(dk ls | sed "s|0.0.0.0|http://$(cat ~/.config/dk/dk.conf | grep "^IP" | cut -d"=" -f2)|g " | sed 's/:::[^[:space:]]*//g' | sed 's/->[^[:space:]]*//g' |  sed 's/\b\w*\/tcp\b//g' |s\
+ed 's/\b\w*\/udp\b//g'  | sed s'| ,||'g  |  tail -n +4)
+    echo "   --------------------------------------------------------------------" | sed -e 's/-/\x1b[31m-\x1b[0m/g'
+    echo -e "$PORTS" | sed -e 's/http[^ ]*/\x1b[32m&\x1b[0m/g'
+    echo "   --------------------------------------------------------------------" | sed -e 's/-/\x1b[31m-\x1b[0m/g'
+    exit
 fi
 
 if [ "$1" = "u" ] || [ "$1" = "start" ] || [ "$1" = "up" ]
