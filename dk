@@ -167,7 +167,8 @@ if [ "$1" = "mp" ] ; then
     dk m
     echo ""
     echo -e "${RED}pulsa Ctrl+c para salir${NC}"
-    sleep 3
+    echo    "Pulsa cualquier tecla para continuar"
+    read X
     done
     exit
 fi
@@ -180,7 +181,8 @@ if [ "$1" = "mfp" ] ; then
     dk mf "${2}" "${3}" "${4}" "${5}" "${6}" "${7}" "${8}" "${9}" "${10}" "${11}" "${12}" "${13}" "${14}" "${15}" "${16}" "${17}" "${18}" "${19}" "${20}" "${21}"
     echo ""
     echo -e "${RED}pulsa Ctrl+c para salir${NC}"
-    sleep 3
+    echo    "Pulsa cualquier tecla para continuar"
+    read X
     done
     exit
 fi
@@ -216,8 +218,14 @@ for stopped_dockers in $stopped_containers; do
 done
 
 echo ""
-echo "¿Qué docker quieres cambiar de estado, reiniciar o mostrar sus puertos? (Introduce el número seguido de 'r' para reiniciar o 'p' para mostrar los puertos): "
+echo "¿Qué docker quieres cambiar de estado, reiniciar o mostrar sus puertos? (Introduce el número seguido de 'r' para reiniciar o 'p' para mostrar los puertos , si pulsas solo p, lista los puertos en el servidor.): "
 read -r docker_input
+
+if [ "$docker_input" = "p" ]; then
+    dk lsp
+    exit
+fi
+
 
 docker_number="${docker_input%[rp]}"
 option="${docker_input: -1}"
@@ -291,8 +299,13 @@ for stopped_dockers in $stopped_containers; do
 done
 echo ""
 
-echo "¿Qué docker quieres cambiar de estado, reiniciar o mostrar sus puertos? (Introduce el número seguido de 'r' para reiniciar o 'p' para mostrar los puertos): "
+echo "¿Qué docker quieres cambiar de estado, reiniciar o mostrar sus puertos? (Introduce el número seguido de 'r' para reiniciar o 'p' para mostrar los puertos, si pulsas solo p, lista los puertos en el servidor.): "
 read -r docker_input
+
+if [ "$docker_input" = "p" ]; then
+    dk lsp
+    exit
+fi
 
 docker_number="${docker_input%[rp]}"
 option="${docker_input: -1}"
