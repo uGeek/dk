@@ -2,7 +2,7 @@
 #
 #  dk
 #
-VERSION="v1.1.6   1/08/2023"
+VERSION="v1.1.7   1/08/2023"
 
 
 
@@ -72,6 +72,8 @@ dk   m                   -> Cambiar estado de dockers mediante menú (si añades
 dk   mp                  -> Comando m, pero con prompt en modo bucle infinito
 dk   mf                  -> Cambiar estado de dockers mediante menú. Solo dockers que se indiquen. Ejemplo: dk mf caddy jellyfin
 dk   mfp                 -> Comando mf, pero con prompt en modo bucle infinito
+dk   mft                 -> Comando mf pero pudiendo determinal el tiempo máximo que estará corriendo el docker
+dk   mftp                -> Comando mft, pero con pront y pudiendo determinal el tiempo máximo de duración que estará corriendo el docker
 dk   cli                 -> Menú para crear un contendor guardado con docker cli
 dk   cliv                -> Menú para ver un contendor guardado con docker o docker-compose (show, see) 
 dk   a                   -> Automontaje de todos los dockers de un grupo (add)
@@ -343,6 +345,111 @@ else
 fi
 exit
 fi
+
+if [ "$1" = "ut" ]; then
+    docker start $3 & sleep $2 && docker stop $3 &
+    exit
+fi
+
+
+if [ "$1" = "mftp" ] ; then
+   RED='\033[0;31m'
+   NC='\033[0m'
+
+    while true; do
+    dk mf "${2}" "${3}" "${4}" "${5}" "${6}" "${7}" "${8}" "${9}" "${10}" "${11}" "${12}" "${13}" "${14}" "${15}" "${16}" "${17}" "${18}" "${19}" "${20}" "${21}"
+    echo ""
+    echo -e "${RED}pulsa Ctrl+c para salir${NC}"
+    echo    "Pulsa cualquier tecla para continuar"
+    read X
+    done
+    exit
+fi
+
+
+if [ "$1" = "mft" ] ; then
+clear
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+i=1
+declare -A array
+
+echo ""
+echo ""
+echo "Dockers en ejecución:"
+running_containers=$(docker ps --format "{{.Names}}" | sort)
+
+for running_dockers in $running_containers; do
+    if [[ " ${@} " =~ " ${running_dockers} " ]]; then
+        echo -e "${GREEN}${running_dockers}${NC} (${i})"
+        array[$i]=$running_dockers
+        i=$((i + 1))
+    fi
+done
+
+echo ""
+echo "Dockers detenidos:"
+stopped_containers=$(docker ps -a --filter status=exited --format "{{.Names}}" | sort)
+
+for stopped_dockers in $stopped_containers; do
+    if [[ " ${@} " =~ " ${stopped_dockers} " ]]; then
+        echo -e "${RED}${stopped_dockers}${NC} (${i})"
+        array[$i]=$stopped_dockers
+        i=$((i + 1))
+    fi
+done
+echo ""
+
+echo "¿Qué docker quieres cambiar de estado, reiniciar o mostrar sus puertos? (Introduce el número seguido de 'r' para reiniciar o 'p' para mostrar los puertos, si pulsas solo p, lista los puertos en el servidor.): "
+read -r docker_input
+
+if [ "$docker_input" = "p" ]; then
+    dk lsp
+    exit
+fi
+
+docker_number="${docker_input%[rp]}"
+option="${docker_input: -1}"
+
+if [[ -z $docker_number ]]; then
+    docker_number=$docker_input
+    option=""
+fi
+
+if ! [[ $docker_number =~ ^[0-9]+$ ]]; then
+    echo "El valor introducido no es un número válido."
+elif (( docker_number < 1 || docker_number >= i )); then
+    echo "El número que has introducido está fuera del rango válido."
+else
+    docker_name="${array[$docker_number]}"
+    docker_status=$(docker inspect -f '{{.State.Status}}' "$docker_name")
+
+    if [[ $option == "r" ]]; then
+        echo "Reiniciando el docker $docker_name"
+        docker restart "$docker_name"
+    elif [[ $option == "p" ]]; then
+        docker_port=$(docker port "$docker_name")
+        echo ""
+        echo "Puertos del docker $docker_name:"
+        echo "$docker_port"
+    else
+        if [[ $docker_status == "running" ]]; then
+            echo "Deteniendo el docker $docker_name"
+            docker stop "$docker_name"
+        else
+            echo "Introduce el tiempo que deseas que este corriendo del docker"
+            echo "  ejemplo: 100s, 5m , 2h,... (100 segundo, 5 minutos, 2 horas,...)"
+            echo -n "Tiempo= " ; read TIEMPO
+            echo "Iniciando el docker $docker_name y corriendo durante $TIEMPO"
+            docker start "$docker_name" & sleep $TIEMPO && docker stop "$docker_name" &
+        fi
+    fi
+fi
+exit
+fi
+
 
 if [ "$1" = "a" ]
 then
