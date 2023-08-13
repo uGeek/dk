@@ -2,7 +2,7 @@
 #
 #  dk
 #
-VERSION="v1.1.7.1   5/08/2023"
+VERSION="v1.1.7.2   5/08/2023"
 
 
 
@@ -127,6 +127,7 @@ dk   install arm64       -> Instalalar Docker y docker-compose en arm64
 dk   install             -> Instalalar Docker y docker-compose para derivadas de Debian desde los repositorios
 dk   not  [server]       -> Enviar notificaciones de contenedores que se levanten o detengan
 dk   prompt              -> Utilizar comandos en bucle con un prompt
+dk   killall             -> Detener todos los procesos que corren en sugundo plano de dk
 dk  -h, h, --help        -> Ayuda (help)
 
 
@@ -447,6 +448,12 @@ else
         fi
     fi
 fi
+exit
+fi
+
+if [ "$1" = "killall" ]
+then
+killall dk
 exit
 fi
 
