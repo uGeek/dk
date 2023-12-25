@@ -228,22 +228,22 @@ i=1
 declare -A array
 
 echo ""
-echo "Dockers en ejecución:"
-running_containers=$(docker ps --format "{{.Names}}" | sort)
-
-for running_dockers in $running_containers; do
-    echo -e "${GREEN}${running_dockers}${NC} (${i})"
-    array[$i]=$running_dockers
-    i=$((i + 1))
-done
-
-echo ""
 echo "Dockers detenidos:"
 stopped_containers=$(docker ps -a --filter status=exited --format "{{.Names}}" | sort)
 
 for stopped_dockers in $stopped_containers; do
     echo -e "${RED}${stopped_dockers}${NC} (${i})"
     array[$i]=$stopped_dockers
+    i=$((i + 1))
+done
+
+echo ""
+echo "Dockers en ejecución:"
+running_containers=$(docker ps --format "{{.Names}}" | sort)
+
+for running_dockers in $running_containers; do
+    echo -e "${GREEN}${running_dockers}${NC} (${i})"
+    array[$i]=$running_dockers
     i=$((i + 1))
 done
 
