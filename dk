@@ -2,7 +2,7 @@
 #
 #  dk
 #
-VERSION="v1.1.7.6   24/12/2023"
+VERSION="v2.0   25/12/2023"
 
 
 
@@ -63,7 +63,7 @@ echo "$VERSION"
 exit
 fi
 
-if [ "$1" = "-h" ] || [ "$1" = "--help" ] || [ "$1" = "h" ] || [ "$1" = "" ]
+if [ "$1" = "--help" ] || [ "$1" = "h" ] || [ "$1" = "" ]
 then
 echo "
 Modo de empleo: dk [OPCIONES]
@@ -96,7 +96,8 @@ dk   dcrm                -> Eliminar docker-compose detenidos
 dk   dcrrm               -> Eliminar plantilla en directorio dk, docker-compose
 dk   dcn                 -> Guarda un nuevo docker-compose (new)
 dk   clin                -> Guarda un nuevo docker
-dk   i                   -> Imagenes listadas por creación (image)
+dk   i                   -> Imagenes listadas por creación (image) 20 últimas
+dk   iall                -> Imagenes listadas por creación (image)
 dk   rc                  -> Camviar nombre contenedor (rename docker)
 dk   ri                  -> Cambiar nombre de imagen (rename image)
 dk   u, up, start        -> Lista dockers con su número para iniciar (up)
@@ -150,10 +151,27 @@ dk  -h, h, --help        -> Ayuda (help)
     dk b                  ->  Construir un Dockerfile
     dk b ugeek/webdav:arm ->  Construir un Dockerfile con el nombre ugeek/webdav:arm
 
+-------------------------
+Integración con dockcheck
+-------------------------
+dk -install                        -> Clonar el repositorio de dockcheck para funcionar con dk
+
+
+dk [OPTION] [part of name to filter]
+------------------------------------
+dk -h                              ->  Ayuda de dockcheck
+dk -a navidrome                    ->  Actualiza navidrome
+dk -y -d 10 -e nextcloud,heimdall  ->  Actualización automática de imagen +10 dias,
+                                       excluyendo nextcloud,heimdall
+dk -d 10 -s                        ->  Interacción usuario para actualizar todas las imagenes
+                                       (incluidas imágenes las detenidas).
+
+
 
 dk "$VERSION"
  Copyright (C) 2020 Angel. uGeek
  ugeekpodcast@gmail.com" | grep "$2"
+
 exit
 fi
 
@@ -515,6 +533,19 @@ fi
 
 
 if [ "$1" = "i" ]
+then
+echo "--------"
+echo "IMAGENES"
+echo "--------"
+docker images --format 'table {{.CreatedSince}}\t{{.Repository}}:{{.Tag}}\t{{.Size}}'  | grep "$2" | head -n 23
+echo ""
+echo "    $(docker images --format 'table {{.CreatedSince}}\t{{.Repository}}:{{.Tag}}\t{{.Size}}' | tail -n +2 | wc -l) Imagenes en total"
+echo ""
+exit
+fi
+
+
+if [ "$1" = "iall" ]
 then
 echo "--------"
 echo "IMAGENES"
@@ -1729,3 +1760,31 @@ then
 
 done
 fi
+
+
+
+if [ "$1" = "-install" ]
+then
+git clone https://github.com/mag37/dockcheck.git ~/.config/dk/
+    exit
+fi
+
+
+
+
+# Un script que ejecuta un comando si el primer argumento empieza por -
+
+if [[ $1 == -* ]]; then # Comprueba si el primer argumento empieza por -
+    if [[ -f $HOME/.config/dk/dockcheck/dockcheck.sh ]]; then # Comprueba si el archivo existe
+        $HOME/.config/dk/dockcheck/dockcheck.sh $@ # Ejecuta el comando con todos los argumentos
+    else
+        echo "Instala dockcheck para gestionar tus imagenes docker" # Muestra un mensaje de instalación
+        echo "----------------------------------------------------"
+        echo "Ejecuta el comando:"
+        echo "git clone https://github.com/mag37/dockcheck.git ~/.config/dk/"
+    fi
+elif [[ -z $1 ]]; then # Comprueba si no hay argumentos
+    echo "Debes introducir al menos un argumento" # Muestra un mensaje de uso
+else
+    echo "El primer argumento no empieza por -" # Muestra un mensaje de error
+    fi
