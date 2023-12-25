@@ -103,6 +103,21 @@ rm ~/.config/dk/last.log
 ![mf](mf.png)
 
 
+## Integración de dockcheck
+
+Integración del proyecto [dockcheck](https://github.com/mag37/dockcheck) instalandolo con el comando:
+
+```
+dk -install
+```
+
+Mira las opciones de dockcheck con:
+
+```
+dk -h
+```
+
+
 ## Contact
 
 If you want to contact me you can reach me at https://ugeek.github.io.
