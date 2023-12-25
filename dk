@@ -2,7 +2,7 @@
 #
 #  dk
 #
-VERSION="v1.1.7.4   19/11/2023"
+VERSION="v1.1.7.6   24/12/2023"
 
 
 
@@ -102,7 +102,7 @@ dk   ri                  -> Cambiar nombre de imagen (rename image)
 dk   u, up, start        -> Lista dockers con su número para iniciar (up)
 dk   ut                  -> Levantar docker y que esté corriendo durante un tiempo establecido. Ejems:  dk ut 30m flatnotes , dk ut 5h media jellyfin   (Permite hasta 9 dockers)
 dk   d, down, stop       -> Lista dockers corriendo, con su número para detener (down)
-dk   d                   -> Detener todos los dockers que empiecen por el nombre... Ejem: dk dn im , dentrá todos los dockers que su nombre empieza por im, como immich 
+dk   d                   -> Detener todos los dockers que empiecen por el nombre... Ejem: dk dn im , dentrá todos los dockers que su nombre empieza por im, como immich
 dk   r, restart          -> Reiniciando docker
 dk   d -a, stop -a, ...  -> Detener todos los contenedores
 dk   e, exec             -> Entrar dentro del contenedor
@@ -1038,6 +1038,10 @@ fi
 
 if [ "$1" = "stats" ] || [ "$1" = "s" ]
 then
+clear
+echo "Memoria Total dockers = $(docker stats --no-stream --format "{{.MemUsage}}" | awk '{sum += $1} END {print sum}')MB"
+echo "----------------------------------------"
+sleep 3
 docker stats --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t\t{{.NetIO}}"
 exit
 fi
