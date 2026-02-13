@@ -2,9 +2,9 @@
 #
 #  dk
 #
-VERSION="v2.1  07/06/2024"    
+VERSION="v2.1   13/02/2026"
 
-#v2.0  25/12/2023"
+
 
 SOFT=$(diff -q  /usr/bin/dk <(wget -q -O- https://raw.githubusercontent.com/uGeek/dk/master/dk 2>/dev/null))
 
@@ -63,12 +63,134 @@ echo "$VERSION"
 exit
 fi
 
+
+
+if [ "$1" = "--help" ] || [ "$1" = "h" ] || [ "$1" = "" ]
+then
+echo "
+Uso: dk [OPCIONES]
+
+Comandos principales:
+  dk m                     -> Cambiar el estado de los contenedores mediante un menú.
+  dk mp                    -> Comando 'm' en modo bucle infinito.
+  dk mf                    -> Cambiar el estado de contenedores específicos. Ejemplo: dk mf caddy jellyfin
+  dk mfp                   -> Comando 'mf' en modo bucle infinito.
+  dk mft                   -> Cambiar el estado de contenedores con un tiempo máximo de ejecución.
+  dk mftp                  -> Comando 'mft' en modo bucle infinito con tiempo máximo de ejecución.
+  dk cli                   -> Menú para crear un contenedor guardado con Docker CLI.
+  dk cliv                  -> Menú para ver un contenedor guardado con Docker o Docker Compose.
+
+Gestión de Docker Compose:
+  dk a                     -> Automontar todos los contenedores de un grupo.
+  dk dc                    -> Iniciar un Docker Compose (docker-compose up -d).
+  dk dcw                   -> Especificar la ubicación del archivo docker-compose.yml.
+  dk dcwm                  -> Menú para ver la ubicación del archivo docker-compose.yml de contenedores en ejecución.
+  dk dcdf                  -> Menú para detener (down) un Compose desde un contenedor en ejecución.
+  dk dcuf                  -> Menú para iniciar (up) archivos Compose encontrados en el directorio dk.
+  dk dcfu                  -> Iniciar un Docker Compose desde un archivo en el directorio dk.
+  dk dcfd                  -> Detener un Docker Compose desde un archivo en el directorio dk.
+  dk dcfua                 -> Iniciar el primer resultado de un Docker Compose desde un archivo en el directorio dk.
+  dk dcfla                 -> Ver logs del primer resultado de un Docker Compose desde un archivo en el directorio dk.
+  dk dcfda                 -> Detener el primer resultado de un Docker Compose desde un archivo en el directorio dk.
+  dk dcfpa                 -> Actualizar la imagen del Docker Compose desde un archivo en el directorio dk.
+  dk dcr                   -> Iniciar un Docker Compose guardado (remoto).
+  dk dcd                   -> Detener un Docker Compose y sus volúmenes (docker-compose down).
+  dk dcvl                  -> Eliminar un Docker Compose y sus volúmenes (docker-compose down -v).
+  dk dcv                   -> Ver y editar un Docker Compose.
+  dk dccp                  -> Copiar un Docker Compose existente a otro nombre.
+  dk dcl                   -> Ver logs de Docker Compose.
+  dk dcrm                  -> Eliminar contenedores de Docker Compose detenidos.
+  dk dcrrm                 -> Eliminar plantilla en el directorio dk de Docker Compose.
+  dk dcn                   -> Guardar un nuevo Docker Compose.
+
+Gestión de imágenes y contenedores:
+  dk i                     -> Listar las últimas 20 imágenes creadas.
+  dk iall                  -> Listar todas las imágenes creadas.
+  dk rc                    -> Cambiar el nombre de un contenedor.
+  dk ri                    -> Cambiar el nombre de una imagen.
+  dk u, up, start          -> Iniciar contenedores y mostrar lista con números.
+  dk d, down, stop         -> Detener contenedores en ejecución y mostrar lista con números.
+  dk r, restart            -> Reiniciar un contenedor.
+  dk d -a, stop -a        -> Detener todos los contenedores.
+  dk e, exec               -> Entrar dentro de un contenedor.
+  dk eb, execb             -> Entrar dentro de un contenedor con bash.
+  dk ip                    -> Conocer la IP de un contenedor.
+  dk ls ip, ip -a         -> Listar todas las IPs.
+  dk net, red              -> Listar todas las redes.
+  dk ls, ps                -> Listar contenedores en ejecución y sus puertos.
+  dk ls -a, ps -a          -> Listar todos los contenedores disponibles.
+  dk st, store             -> Descargar contenedores de la tienda de dk.
+  dk rm                    -> Listar contenedores con su número para ser eliminados.
+  dk drm                   -> Listar contenedores para detener y eliminar.
+  dk rmi                   -> Listar imágenes con su número para ser eliminadas.
+  dk b                     -> Construir una imagen a partir de un Dockerfile.
+  dk c                     -> Crear un contenedor a partir de una imagen.
+  dk save                  -> Exportar imagen en el directorio actual.
+  dk load                  -> Cargar imagen del directorio actual.
+  dk sload                 -> Buscar imagen en el directorio actual filtrando por palabra.
+  dk l, log                -> Listar contenedores con su número para ver logs.
+  dk s, stats              -> Ver consumo de CPU, memoria, etc.
+  dk sp, statsp           -> Ver consumo de CPU y memoria (porcentaje) de todos los contenedores.
+  dk s c, stats c         -> Listar contenedores con su número para ver el consumo de CPU y memoria.
+  dk ss, stats sort       -> Ordenar contenedores por consumo de CPU, memoria, etc.
+  dk p, prune              -> Borrar todos los contenedores, imágenes y redes que estén detenidos.
+
+Instalación:
+  dk install ubuntu       -> Instalar Docker y Docker Compose en Ubuntu.
+  dk install debian       -> Instalar Docker y Docker Compose en Debian.
+  dk install armhf        -> Instalar Docker y Docker Compose en armhf (Raspberry Pi).
+  dk install arm64        -> Instalar Docker y Docker Compose en arm64.
+  dk install              -> Instalar Docker y Docker Compose para derivadas de Debian desde los repositorios.
+
+Notificaciones:
+  dk not [server]        -> Enviar notificaciones sobre contenedores que se inicien o detengan.
+
+Otros:
+  dk prompt               -> Utilizar comandos en bucle con un prompt.
+  dk killall              -> Detener todos los procesos que corren en segundo plano de dk.
+  dk -h, h, --help        -> Mostrar esta ayuda.
+
+Ejemplos:
+  dk u                    -> Iniciar un contenedor.
+  dk u web                -> Iniciar un contenedor, mostrando una lista filtrada por 'web'.
+  
+  Esta opción de filtrado también funciona para detener contenedores, listar imágenes, redes, etc.
+
+  dk b                    -> Construir un Dockerfile.
+  dk b ugeek/webdav:arm   -> Construir un Dockerfile con el nombre ugeek/webdav:arm.
+
+-------------------------
+Integración con dockcheck
+-------------------------
+  dk -install             -> Clonar el repositorio de dockcheck para funcionar con dk.
+
+dk [OPTION] [parte del nombre para filtrar]
+------------------------------------
+  dk -h                   -> Ayuda de dockcheck.
+  dk -a navidrome         -> Actualizar navidrome.
+  dk -y -d 10 -e nextcloud,heimdall -> Actualización automática de imágenes +10 días, excluyendo nextcloud y heimdall.
+  dk -d 10 -s             -> Interacción del usuario para actualizar todas las imágenes (incluidas las detenidas).
+
+dk "$VERSION"
+Copyright (C) 2020 Angel. uGeek
+ugeekpodcast@gmail.com
+" | grep "$2"
+
+exit
+fi
+
+
+
+
 if [ "$1" = "--help" ] || [ "$1" = "h" ] || [ "$1" = "" ]
 then
 echo "
 Modo de empleo: dk [OPCIONES]
 
 dk   m                   -> Cambiar estado de dockers mediante menú (si añades r o p despues del número de docker, reinicia o muestra puertos)
+dk   mt     [listar en plano para telegram]
+dk   mte    [cambiar estado]
+
 dk   mp                  -> Comando m, pero con prompt en modo bucle infinito
 dk   mf                  -> Cambiar estado de dockers mediante menú. Solo dockers que se indiquen. Ejemplo: dk mf caddy jellyfin
 dk   mfp                 -> Comando mf, pero con prompt en modo bucle infinito
@@ -78,6 +200,10 @@ dk   cli                 -> Menú para crear un contendor guardado con docker cl
 dk   cliv                -> Menú para ver un contendor guardado con docker o docker-compose (show, see)
 dk   a                   -> Automontaje de todos los dockers de un grupo (add)
 dk   dc                  -> Montar un docker-compose (docker-compose up -d)
+dk   dcw                 -> Especificar la ubicación del archivo docker-compose.yml.
+dk   dcwm                -> Menú para ver la ubicación del archivo docker-compose.yml de contenedores en ejecución.
+dk   dcdf                -> Menú para detener (down) un Compose desde un contenedor en ejecución.
+dk   dcuf                -> Menú para iniciar (up) archivos Compose encontrados en el directorio dk.
 dk   dcfu                -> Montar un docker-compose en un archivo (file) desde el directorio dk
 dk   dcfd                -> Detener un docker-compose en un archivo (file) desde el directorio dk
 dk   dcfua               -> Montar el primer resultado un docker-compose en un archivo (file) desde el directorio dk. Primer resultado por nombre
@@ -294,6 +420,172 @@ fi
 exit
 fi
 
+
+
+if [ "$1" = "m" ] ; then
+clear
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
+
+i=1
+declare -A array
+
+echo ""
+echo "Dockers detenidos:"
+stopped_containers=$(docker ps -a --filter status=exited --format "{{.Names}}" | sort)
+
+for stopped_dockers in $stopped_containers; do
+    echo -e "${RED}${stopped_dockers}${NC} (${i})"
+    array[$i]=$stopped_dockers
+    i=$((i + 1))
+done
+
+echo ""
+echo "Dockers en ejecución:"
+running_containers=$(docker ps --format "{{.Names}}" | sort)
+
+for running_dockers in $running_containers; do
+    echo -e "${GREEN}${running_dockers}${NC} (${i})"
+    array[$i]=$running_dockers
+    i=$((i + 1))
+done
+
+echo ""
+echo "¿Qué docker quieres cambiar de estado, reiniciar o mostrar sus puertos? (Introduce el número seguido de 'r' para reiniciar o 'p' para mostrar los puertos , si pulsas solo p, lista los puertos en el servidor.): "
+read -r docker_input
+
+if [ "$docker_input" = "p" ]; then
+    dk lsp
+    exit
+fi
+
+docker_number="${docker_input%[rp]}"
+option="${docker_input: -1}"
+
+if [[ -z $docker_number ]]; then
+    docker_number=$docker_input
+    option=""
+fi
+
+if ! [[ $docker_number =~ ^[0-9]+$ ]]; then
+    echo "El valor introducido no es un número válido."
+elif (( docker_number < 1 || docker_number >= i )); then
+    echo "El número que has introducido está fuera del rango válido."
+else
+    docker_name="${array[$docker_number]}"
+    docker_status=$(docker inspect -f '{{.State.Status}}' "$docker_name")
+
+    if [[ $option == "r" ]]; then
+        echo "Reiniciando el docker $docker_name"
+        docker restart "$docker_name"
+    elif [[ $option == "p" ]]; then
+        docker_port=$(docker port "$docker_name")
+        echo ""
+        echo "Puertos del docker $docker_name:"
+        echo "$docker_port"
+    else
+        if [[ $docker_status == "running" ]]; then
+            echo "Deteniendo el docker $docker_name"
+            docker stop "$docker_name"
+        else
+            echo "Iniciando el docker $docker_name"
+            docker start "$docker_name"
+        fi
+    fi
+fi
+exit
+fi
+
+# Nueva opción "mt" - Lista dockers SIN color
+if [ "$1" = "mt" ] ; then
+clear
+
+i=1
+declare -A array
+
+echo ""
+echo "Dockers detenidos:"
+stopped_containers=$(docker ps -a --filter status=exited --format "{{.Names}}" | sort)
+
+for stopped_dockers in $stopped_containers; do
+    echo "${stopped_dockers} (${i})"
+    array[$i]=$stopped_dockers
+    i=$((i + 1))
+done
+
+echo ""
+echo "Dockers en ejecución:"
+running_containers=$(docker ps --format "{{.Names}}" | sort)
+
+for running_dockers in $running_containers; do
+    echo "${running_dockers} (${i})"
+    array[$i]=$running_dockers
+    i=$((i + 1))
+done
+
+echo ""
+exit
+fi
+
+# Nueva opción "mte [numero]" - Cambia el estado del docker automáticamente
+if [ "$1" = "mte" ] ; then
+clear
+
+i=1
+declare -A array
+
+echo ""
+echo "Dockers detenidos:"
+stopped_containers=$(docker ps -a --filter status=exited --format "{{.Names}}" | sort)
+
+for stopped_dockers in $stopped_containers; do
+    echo "${stopped_dockers} (${i})"
+    array[$i]=$stopped_dockers
+    i=$((i + 1))
+done
+
+echo ""
+echo "Dockers en ejecución:"
+running_containers=$(docker ps --format "{{.Names}}" | sort)
+
+for running_dockers in $running_containers; do
+    echo "${running_dockers} (${i})"
+    array[$i]=$running_dockers
+    i=$((i + 1))
+done
+
+echo ""
+
+if [ -z "$2" ]; then
+    echo "Error: Debes proporcionar el número del docker."
+    echo "Uso: mte [numero]"
+    exit 1
+fi
+
+docker_number=$2
+
+if ! [[ $docker_number =~ ^[0-9]+$ ]]; then
+    echo "El valor introducido no es un número válido."
+elif (( docker_number < 1 || docker_number >= i )); then
+    echo "El número que has introducido está fuera del rango válido."
+else
+    docker_name="${array[$docker_number]}"
+    docker_status=$(docker inspect -f '{{.State.Status}}' "$docker_name")
+
+    if [[ $docker_status == "running" ]]; then
+        echo "Deteniendo el docker $docker_name"
+        docker stop "$docker_name"
+    else
+        echo "Iniciando el docker $docker_name"
+        docker start "$docker_name"
+    fi
+fi
+exit
+fi
+
+
+
 if [ "$1" = "mf" ] ; then
 clear
 RED='\033[0;31m'
@@ -481,6 +773,81 @@ fi
 if [ "$1" = "killall" ]
 then
 killall dk
+exit
+fi
+
+
+
+
+if [ "$1" = "dcw" ]; then
+    if [ -z "$2" ]; then
+        echo "Introduce el nombre del contenedor Docker."
+        exit 1
+    fi
+    docker inspect "$2" | grep -E "working_dir|config_files"
+#    cd  $(echo $(docker inspect "$2" | grep -E "working_dir|config_files" | tail -n 1 | cut -d: -f2)) ; exec bash #$(echo $0 | sed s'|-||'g)   
+    exit
+fi
+
+if [ "$1" = "dcwm" ]
+then
+echo "--------------------"
+echo "CONTAINERS CORRIENDO"
+echo "--------------------"
+docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl | grep "$2" 2>/dev/null
+docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/dcwm.dk
+echo ""
+echo -en "    Selecciona el número de contenedor que quieres inspeccionar: "
+read CONTENEDOR
+CONTENEDORUP=$(cat ~/.config/dk/dcwm.dk | sed -n ""$CONTENEDOR""p)
+echo ""
+docker inspect "$CONTENEDORUP" | grep -E "working_dir|config_files"
+echo ""
+exit
+fi
+
+if [ "$1" = "dcdf" ]
+then
+echo "--------------------"
+echo "CONTAINERS CORRIENDO"
+echo "--------------------"
+docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' | nl | grep "$2" 2>/dev/null
+docker ps --format 'table {{.Names}}' |  sed 's|NAMES||g' |  sed 's|PORTS||g' | sort | sed '/^ *#/d; /^ *$/d' > ~/.config/dk/dcdf.dk
+echo ""
+echo -en "    Selecciona el número de contenedor para hacer docker-compose down: "
+read CONTENEDOR
+CONTENEDORUP=$(cat ~/.config/dk/dcdf.dk | sed -n ""$CONTENEDOR""p)
+echo ""
+FILE=$(docker inspect "$CONTENEDORUP" | grep "com.docker.compose.project.config_files" | cut -d: -f2 | sed 's/[", ]//g')
+if [ -z "$FILE" ]; then
+    echo "No se encontró un archivo docker-compose asociado a este contenedor."
+else
+    echo "Ejecutando: docker-compose -f $FILE down"
+    docker-compose -f "$FILE" down
+fi
+echo ""
+exit
+fi
+
+if [ "$1" = "dcuf" ]
+then
+clear
+echo "----------------------------------------------------"
+echo "ARCHIVOS COMPOSE ENCONTRADOS EN $RUTA_DOCKER_DOTFILE"
+echo "----------------------------------------------------"
+find "$RUTA_DOCKER_DOTFILE" -maxdepth 2 \( -name "docker-compose.yml" -o -name "compose.yaml" \) > ~/.config/dk/dcuf.dk
+nl ~/.config/dk/dcuf.dk
+echo ""
+echo -en "    Selecciona el número del archivo para hacer docker-compose up -d: "
+read SELECCION
+FILE=$(sed -n ""$SELECCION""p ~/.config/dk/dcuf.dk)
+if [ -z "$FILE" ]; then
+    echo "Selección no válida."
+else
+    echo "Ejecutando: docker-compose -f $FILE up -d"
+    docker-compose -f "$FILE" up -d
+fi
+echo ""
 exit
 fi
 
@@ -1765,7 +2132,7 @@ fi
 
 if [ "$1" = "-install" ]
 then
-wget -O ~/.local/bin/dockcheck.sh "https://raw.githubusercontent.com/mag37/dockcheck/main/dockcheck.sh" && chmod +x ~/.local/bin/dockcheck.sh
+wget -O ~/.local/bin/dockcheck.sh "https://raw.githubusercontent.com/mag37/dockcheck/main/dockcheck.sh" && chmod +x ~/.local/bin/dockcheck.sh    
     exit
 fi
 
